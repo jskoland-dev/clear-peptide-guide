@@ -6,12 +6,16 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft, Info, Calculator as CalcIcon, Beaker, Layers } from "lucide-react";
+import { ArrowLeft, Info, Calculator as CalcIcon, Beaker, Layers, Lock } from "lucide-react";
 import { toast } from "sonner";
 import { StackCalculator } from "@/components/calculator/StackCalculator";
+import { useSubscription } from "@/hooks/useSubscription";
+import { UpgradeDialog } from "@/components/progress/UpgradeDialog";
 
 const Calculator = () => {
   const navigate = useNavigate();
+  const { isPremium } = useSubscription();
+  const [showUpgradeDialog, setShowUpgradeDialog] = useState(false);
   const [peptideMg, setPeptideMg] = useState("");
   const [bacWater, setBacWater] = useState("");
   const [desiredDose, setDesiredDose] = useState("");
@@ -79,9 +83,20 @@ const Calculator = () => {
               <Beaker className="w-4 h-4" />
               Single Peptide
             </TabsTrigger>
-            <TabsTrigger value="stack" className="flex items-center gap-2">
+            <TabsTrigger 
+              value="stack" 
+              className="flex items-center gap-2"
+              disabled={!isPremium}
+              onClick={(e) => {
+                if (!isPremium) {
+                  e.preventDefault();
+                  setShowUpgradeDialog(true);
+                }
+              }}
+            >
               <Layers className="w-4 h-4" />
               Stack Calculator
+              {!isPremium && <Lock className="w-3 h-3 ml-1" />}
             </TabsTrigger>
           </TabsList>
 
@@ -244,10 +259,28 @@ const Calculator = () => {
           </TabsContent>
 
           <TabsContent value="stack">
-            <StackCalculator />
+            {isPremium ? (
+              <StackCalculator />
+            ) : (
+              <Card className="p-12 text-center">
+                <Lock className="w-12 h-12 mx-auto mb-4 text-muted-foreground" />
+                <h3 className="text-2xl font-bold mb-2">Premium Feature</h3>
+                <p className="text-muted-foreground mb-6">
+                  Upgrade to Premium to access the Multi-Peptide Stack Calculator
+                </p>
+                <Button variant="hero" onClick={() => setShowUpgradeDialog(true)}>
+                  Upgrade to Premium
+                </Button>
+              </Card>
+            )}
           </TabsContent>
         </Tabs>
       </div>
+      
+      <UpgradeDialog 
+        open={showUpgradeDialog} 
+        onOpenChange={setShowUpgradeDialog}
+      />
     </div>
   );
 };
