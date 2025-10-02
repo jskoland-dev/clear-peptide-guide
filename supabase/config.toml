@@ -1,1 +1,4 @@
 project_id = "cpqwhnfomlsztdzongrx"
+
+[functions.peptide-assistant]
+verify_jwt = true
