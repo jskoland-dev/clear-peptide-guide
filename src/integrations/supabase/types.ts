@@ -14,6 +14,60 @@ export type Database = {
   }
   public: {
     Tables: {
+      daily_logs: {
+        Row: {
+          body_fat_percentage: number | null
+          body_weight: number | null
+          created_at: string
+          energy_level: number | null
+          id: string
+          log_date: string
+          mood_rating: number | null
+          notes: string | null
+          positive_effects: string | null
+          side_effects: string[] | null
+          side_effects_notes: string | null
+          sleep_quality: number | null
+          soreness_level: number | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          body_fat_percentage?: number | null
+          body_weight?: number | null
+          created_at?: string
+          energy_level?: number | null
+          id?: string
+          log_date: string
+          mood_rating?: number | null
+          notes?: string | null
+          positive_effects?: string | null
+          side_effects?: string[] | null
+          side_effects_notes?: string | null
+          sleep_quality?: number | null
+          soreness_level?: number | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          body_fat_percentage?: number | null
+          body_weight?: number | null
+          created_at?: string
+          energy_level?: number | null
+          id?: string
+          log_date?: string
+          mood_rating?: number | null
+          notes?: string | null
+          positive_effects?: string | null
+          side_effects?: string[] | null
+          side_effects_notes?: string | null
+          sleep_quality?: number | null
+          soreness_level?: number | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       injections: {
         Row: {
           created_at: string

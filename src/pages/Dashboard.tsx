@@ -149,10 +149,20 @@ export default function Dashboard() {
               AI Assistant
             </Button>
             {isPremium && (
-              <Button variant="outline" onClick={() => navigate("/progress")}>
-                <Camera className="h-4 w-4 mr-2" />
-                Progress
-              </Button>
+              <>
+                <Button variant="outline" onClick={() => navigate("/progress")}>
+                  <Camera className="h-4 w-4 mr-2" />
+                  Progress
+                </Button>
+                <Button variant="outline" onClick={() => navigate("/analytics")}>
+                  <BarChart3 className="h-4 w-4 mr-2" />
+                  Analytics
+                </Button>
+                <Button variant="outline" onClick={() => navigate("/daily-log")}>
+                  <Activity className="h-4 w-4 mr-2" />
+                  Daily Log
+                </Button>
+              </>
             )}
             <Button variant="outline" onClick={() => navigate("/protocols")}>
               <BookOpen className="h-4 w-4 mr-2" />
