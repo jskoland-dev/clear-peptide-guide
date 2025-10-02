@@ -223,6 +223,9 @@ export type Database = {
       }
       user_subscriptions: {
         Row: {
+          ai_message_count: number
+          ai_message_limit: number
+          ai_messages_reset_date: string | null
           created_at: string
           current_period_end: string | null
           id: string
@@ -233,6 +236,9 @@ export type Database = {
           user_id: string
         }
         Insert: {
+          ai_message_count?: number
+          ai_message_limit?: number
+          ai_messages_reset_date?: string | null
           created_at?: string
           current_period_end?: string | null
           id?: string
@@ -243,6 +249,9 @@ export type Database = {
           user_id: string
         }
         Update: {
+          ai_message_count?: number
+          ai_message_limit?: number
+          ai_messages_reset_date?: string | null
           created_at?: string
           current_period_end?: string | null
           id?: string
@@ -312,6 +321,23 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      check_and_increment_ai_usage: {
+        Args: { p_user_id: string }
+        Returns: {
+          allowed: boolean
+          limit_value: number
+          remaining: number
+        }[]
+      }
+      get_ai_usage: {
+        Args: { p_user_id: string }
+        Returns: {
+          limit_value: number
+          remaining: number
+          reset_date: string
+          used: number
+        }[]
+      }
       is_premium_user: {
         Args: { user_id: string }
         Returns: boolean

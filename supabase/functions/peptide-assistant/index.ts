@@ -1,5 +1,6 @@
 import "https://deno.land/x/xhr@0.1.0/mod.ts";
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.38.4';
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -13,6 +14,56 @@ serve(async (req) => {
 
   try {
     const { messages } = await req.json();
+    const authHeader = req.headers.get('Authorization');
+    
+    if (!authHeader) {
+      return new Response(JSON.stringify({ error: "Authentication required" }), {
+        status: 401,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
+    const supabaseClient = createClient(
+      Deno.env.get('SUPABASE_URL') ?? '',
+      Deno.env.get('SUPABASE_ANON_KEY') ?? '',
+      { global: { headers: { Authorization: authHeader } } }
+    );
+
+    const { data: { user }, error: userError } = await supabaseClient.auth.getUser();
+    
+    if (userError || !user) {
+      return new Response(JSON.stringify({ error: "Invalid authentication" }), {
+        status: 401,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
+    // Check AI usage limit
+    const { data: usageData, error: usageError } = await supabaseClient
+      .rpc('check_and_increment_ai_usage', { p_user_id: user.id })
+      .single();
+
+    if (usageError) {
+      console.error("Error checking usage:", usageError);
+      return new Response(JSON.stringify({ error: "Failed to check usage limit" }), {
+        status: 500,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
+    const usage = usageData as { allowed: boolean; remaining: number; limit_value: number };
+
+    if (!usage.allowed) {
+      return new Response(JSON.stringify({ 
+        error: "AI message limit reached",
+        remaining: 0,
+        limit: usage.limit_value 
+      }), {
+        status: 403,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     
     if (!LOVABLE_API_KEY) {

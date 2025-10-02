@@ -2,9 +2,12 @@ import { useState, useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Card } from "@/components/ui/card";
-import { Bot, Send, ArrowLeft, Loader2 } from "lucide-react";
+import { Bot, Send, ArrowLeft, Loader2, AlertCircle } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
+import { useAIUsage } from "@/hooks/useAIUsage";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { supabase } from "@/integrations/supabase/client";
 
 type Message = {
   role: "user" | "assistant";
@@ -14,6 +17,7 @@ type Message = {
 const AIAssistant = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { usage, loading: usageLoading, refetch: refetchUsage } = useAIUsage();
   const [messages, setMessages] = useState<Message[]>([
     {
       role: "assistant",
@@ -40,12 +44,13 @@ const AIAssistant = () => {
 
     try {
       const CHAT_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/peptide-assistant`;
+      const { data: { session } } = await supabase.auth.getSession();
       
       const response = await fetch(CHAT_URL, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
+          Authorization: `Bearer ${session?.access_token || import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
         },
         body: JSON.stringify({ 
           messages: newMessages.map(m => ({ role: m.role, content: m.content }))
@@ -69,6 +74,17 @@ const AIAssistant = () => {
             variant: "destructive",
           });
           setMessages(prev => prev.slice(0, -1));
+          return;
+        }
+        if (response.status === 403) {
+          const errorData = await response.json();
+          toast({
+            title: "Monthly Message Limit Reached",
+            description: `You've used all ${errorData.limit} messages this month. Limit resets next month.`,
+            variant: "destructive",
+          });
+          setMessages(prev => prev.slice(0, -1));
+          refetchUsage();
           return;
         }
         throw new Error("Failed to start stream");
@@ -155,6 +171,9 @@ const AIAssistant = () => {
         }
       }
 
+      // Refetch usage after successful message
+      refetchUsage();
+
     } catch (error) {
       console.error("Error streaming chat:", error);
       toast({
@@ -202,16 +221,47 @@ const AIAssistant = () => {
           >
             <ArrowLeft className="h-5 w-5" />
           </Button>
-          <div className="flex items-center gap-3">
-            <div className="p-2 rounded-lg bg-primary/10">
-              <Bot className="h-6 w-6 text-primary" />
+          <div className="flex-1 flex items-center justify-between gap-3">
+            <div className="flex items-center gap-3">
+              <div className="p-2 rounded-lg bg-primary/10">
+                <Bot className="h-6 w-6 text-primary" />
+              </div>
+              <div>
+                <h1 className="text-2xl font-bold">AI Dosing Assistant</h1>
+                <p className="text-sm text-muted-foreground">Personalized peptide protocol recommendations</p>
+              </div>
             </div>
-            <div>
-              <h1 className="text-2xl font-bold">AI Dosing Assistant</h1>
-              <p className="text-sm text-muted-foreground">Personalized peptide protocol recommendations</p>
-            </div>
+            {!usageLoading && usage && usage.limit > 0 && (
+              <div className="text-right">
+                <p className="text-sm font-medium">
+                  {usage.remaining}/{usage.limit} messages
+                </p>
+                <p className="text-xs text-muted-foreground">remaining this month</p>
+              </div>
+            )}
           </div>
         </div>
+
+        {/* Usage Warning */}
+        {!usageLoading && usage && usage.remaining <= 10 && usage.remaining > 0 && (
+          <Alert className="mb-4">
+            <AlertCircle className="h-4 w-4" />
+            <AlertDescription>
+              You have {usage.remaining} AI messages remaining this month. Your limit will reset on{" "}
+              {new Date(usage.resetDate).toLocaleDateString()}.
+            </AlertDescription>
+          </Alert>
+        )}
+
+        {!usageLoading && usage && usage.remaining === 0 && (
+          <Alert className="mb-4" variant="destructive">
+            <AlertCircle className="h-4 w-4" />
+            <AlertDescription>
+              You've reached your monthly limit of {usage.limit} AI messages. Your limit will reset on{" "}
+              {new Date(usage.resetDate).toLocaleDateString()}.
+            </AlertDescription>
+          </Alert>
+        )}
 
         {/* Chat Messages */}
         <Card className="mb-4 p-4 h-[calc(100vh-280px)] overflow-y-auto">
@@ -272,7 +322,7 @@ const AIAssistant = () => {
             type="submit" 
             size="icon" 
             className="h-[60px] w-[60px] shrink-0"
-            disabled={!input.trim() || isLoading}
+            disabled={!input.trim() || isLoading || (usage?.remaining === 0)}
           >
             <Send className="h-5 w-5" />
           </Button>
