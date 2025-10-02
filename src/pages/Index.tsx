@@ -110,6 +110,10 @@ const Index = () => {
                   </div>
                   <div className="flex items-start gap-3">
                     <Check className="h-5 w-5 text-primary mt-0.5 shrink-0" />
+                    <span className="font-medium">Multi-peptide stack calculator</span>
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <Check className="h-5 w-5 text-primary mt-0.5 shrink-0" />
                     <span className="font-medium">Educational resources & guides</span>
                   </div>
                   <div className="flex items-start gap-3">
