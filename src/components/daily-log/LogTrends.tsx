@@ -1,10 +1,14 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Button } from "@/components/ui/button";
+import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from "recharts";
 import { format, subDays } from "date-fns";
-import { TrendingUp, Activity, Moon, Zap, Scale } from "lucide-react";
+import { TrendingUp, Activity, Moon, Zap, Scale, LogIn } from "lucide-react";
 
 interface DailyLog {
   log_date: string;
@@ -19,13 +23,19 @@ interface DailyLog {
 }
 
 export function LogTrends() {
+  const { user } = useAuth();
+  const navigate = useNavigate();
   const [logs, setLogs] = useState<DailyLog[]>([]);
   const [loading, setLoading] = useState(true);
   const [timeRange, setTimeRange] = useState<"7" | "30" | "90">("30");
 
   useEffect(() => {
-    fetchLogs();
-  }, [timeRange]);
+    if (user) {
+      fetchLogs();
+    } else {
+      setLoading(false);
+    }
+  }, [timeRange, user]);
 
   const fetchLogs = async () => {
     setLoading(true);
@@ -95,6 +105,21 @@ export function LogTrends() {
 
   if (loading) {
     return <div className="text-center py-8">Loading trends...</div>;
+  }
+
+  if (!user) {
+    return (
+      <Card>
+        <CardContent className="py-12 text-center space-y-4">
+          <LogIn className="h-12 w-12 mx-auto text-muted-foreground" />
+          <p className="text-muted-foreground">Sign in to view your trends and analytics</p>
+          <Button onClick={() => navigate("/auth")}>
+            <LogIn className="h-4 w-4 mr-2" />
+            Sign In
+          </Button>
+        </CardContent>
+      </Card>
+    );
   }
 
   if (logs.length === 0) {

@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -6,9 +7,11 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Slider } from "@/components/ui/slider";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
-import { Smile, Meh, Frown, Save } from "lucide-react";
+import { Smile, Meh, Frown, Save, LogIn } from "lucide-react";
 
 const COMMON_SIDE_EFFECTS = [
   "Headache",
@@ -31,6 +34,8 @@ const MOOD_EMOJIS = [
 
 export function DailyLogForm() {
   const { toast } = useToast();
+  const { user } = useAuth();
+  const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [existingLog, setExistingLog] = useState<any>(null);
   
@@ -46,10 +51,14 @@ export function DailyLogForm() {
   const [notes, setNotes] = useState("");
 
   useEffect(() => {
-    loadTodayLog();
-  }, []);
+    if (user) {
+      loadTodayLog();
+    }
+  }, [user]);
 
   const loadTodayLog = async () => {
+    if (!user) return;
+    
     const today = new Date().toISOString().split('T')[0];
     const { data, error } = await supabase
       .from("daily_logs")
@@ -82,6 +91,16 @@ export function DailyLogForm() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    if (!user) {
+      toast({
+        title: "Sign in required",
+        description: "Please sign in to save your daily logs.",
+        variant: "destructive",
+      });
+      return;
+    }
+
     setLoading(true);
 
     const today = new Date().toISOString().split('T')[0];
@@ -97,7 +116,7 @@ export function DailyLogForm() {
       body_weight: bodyWeight ? parseFloat(bodyWeight) : null,
       body_fat_percentage: bodyFatPercentage ? parseFloat(bodyFatPercentage) : null,
       notes: notes || null,
-      user_id: (await supabase.auth.getUser()).data.user?.id,
+      user_id: user.id,
     };
 
     const { error } = existingLog
@@ -141,6 +160,21 @@ export function DailyLogForm() {
         </CardDescription>
       </CardHeader>
       <CardContent>
+        {!user && (
+          <Alert className="mb-6">
+            <LogIn className="h-4 w-4" />
+            <AlertDescription>
+              You can try the daily log, but you need to{" "}
+              <button
+                onClick={() => navigate("/auth")}
+                className="font-semibold text-primary hover:underline"
+              >
+                sign in
+              </button>{" "}
+              to save your entries.
+            </AlertDescription>
+          </Alert>
+        )}
         <form onSubmit={handleSubmit} className="space-y-6">
           {/* Mood Rating */}
           <div className="space-y-3">
