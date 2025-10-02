@@ -52,13 +52,6 @@ const Index = () => {
               <Button 
                 variant="outline" 
                 size="xl"
-                onClick={() => navigate('/auth')}
-              >
-                Track Your Doses
-              </Button>
-              <Button 
-                variant="outline" 
-                size="xl"
                 onClick={() => navigate('/protocols')}
               >
                 <BookOpen className="w-5 h-5 mr-2" />

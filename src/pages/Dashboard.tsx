@@ -134,6 +134,10 @@ export default function Dashboard() {
             <p className="text-muted-foreground mt-2">Track your peptide journey with precision</p>
           </div>
           <div className="flex gap-2">
+            <Button variant="outline" onClick={() => navigate("/vials")}>
+              <FlaskConical className="h-4 w-4 mr-2" />
+              My Vials
+            </Button>
             <Button variant="outline" onClick={() => navigate("/protocols")}>
               <BookOpen className="h-4 w-4 mr-2" />
               Protocols

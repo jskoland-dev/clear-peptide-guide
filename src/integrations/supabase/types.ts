@@ -231,6 +231,7 @@ export type Database = {
           peptide_name: string
           reconstitution_date: string
           remaining_amount_mg: number
+          status: string
           total_amount_mg: number
           updated_at: string
           user_id: string
@@ -244,6 +245,7 @@ export type Database = {
           peptide_name: string
           reconstitution_date: string
           remaining_amount_mg: number
+          status?: string
           total_amount_mg: number
           updated_at?: string
           user_id: string
@@ -257,6 +259,7 @@ export type Database = {
           peptide_name?: string
           reconstitution_date?: string
           remaining_amount_mg?: number
+          status?: string
           total_amount_mg?: number
           updated_at?: string
           user_id?: string

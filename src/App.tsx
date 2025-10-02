@@ -9,6 +9,7 @@ import Learn from "./pages/Learn";
 import Auth from "./pages/Auth";
 import Dashboard from "./pages/Dashboard";
 import Protocols from "./pages/Protocols";
+import MyVials from "./pages/MyVials";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -26,6 +27,7 @@ const App = () => (
           <Route path="/auth" element={<Auth />} />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/protocols" element={<Protocols />} />
+          <Route path="/vials" element={<MyVials />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
