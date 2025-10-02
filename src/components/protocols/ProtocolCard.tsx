@@ -3,8 +3,11 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Bookmark, BookmarkCheck, Clock, Calendar, Target, AlertTriangle, Package, Bell } from "lucide-react";
+import { Bookmark, BookmarkCheck, Clock, Calendar, Target, AlertTriangle, Package, Bell, Lock } from "lucide-react";
 import { SetReminderDialog } from "./SetReminderDialog";
+import { useSubscription } from "@/hooks/useSubscription";
+import { useNavigate } from "react-router-dom";
+import { toast } from "sonner";
 
 interface Protocol {
   id: string;
@@ -29,6 +32,35 @@ interface ProtocolCardProps {
 export function ProtocolCard({ protocol, isSaved, onSaveToggle }: ProtocolCardProps) {
   const [showDetails, setShowDetails] = useState(false);
   const [showReminder, setShowReminder] = useState(false);
+  const { isPremium } = useSubscription();
+  const navigate = useNavigate();
+
+  const handlePremiumFeature = (action: string) => {
+    if (!isPremium) {
+      toast.error("Premium Feature", {
+        description: `${action} is only available for premium users. Upgrade to access all features!`,
+        action: {
+          label: "Upgrade",
+          onClick: () => navigate("/auth")
+        }
+      });
+      return false;
+    }
+    return true;
+  };
+
+  const handleSave = () => {
+    if (handlePremiumFeature("Saving protocols")) {
+      onSaveToggle();
+    }
+  };
+
+  const handleReminder = () => {
+    if (handlePremiumFeature("Setting reminders")) {
+      setShowDetails(false);
+      setShowReminder(true);
+    }
+  };
 
   const getCategoryColor = (category: string) => {
     const colors: Record<string, string> = {
@@ -64,11 +96,13 @@ export function ProtocolCard({ protocol, isSaved, onSaveToggle }: ProtocolCardPr
               size="icon"
               onClick={(e) => {
                 e.stopPropagation();
-                onSaveToggle();
+                handleSave();
               }}
               className="shrink-0"
             >
-              {isSaved ? (
+              {!isPremium ? (
+                <Lock className="h-5 w-5 text-muted-foreground" />
+              ) : isSaved ? (
                 <BookmarkCheck className="h-5 w-5 text-primary" />
               ) : (
                 <Bookmark className="h-5 w-5" />
@@ -127,8 +161,18 @@ export function ProtocolCard({ protocol, isSaved, onSaveToggle }: ProtocolCardPr
                 <DialogTitle className="text-3xl mt-2">{protocol.peptide_name}</DialogTitle>
               </div>
               <div className="flex gap-2">
-                <Button variant="outline" size="sm" onClick={onSaveToggle}>
-                  {isSaved ? (
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  onClick={handleSave}
+                  disabled={!isPremium}
+                >
+                  {!isPremium ? (
+                    <>
+                      <Lock className="h-4 w-4 mr-2" />
+                      Save
+                    </>
+                  ) : isSaved ? (
                     <>
                       <BookmarkCheck className="h-4 w-4 mr-2" />
                       Saved
@@ -142,11 +186,10 @@ export function ProtocolCard({ protocol, isSaved, onSaveToggle }: ProtocolCardPr
                 </Button>
                 <Button
                   size="sm"
-                  onClick={() => {
-                    setShowDetails(false);
-                    setShowReminder(true);
-                  }}
+                  onClick={handleReminder}
+                  disabled={!isPremium}
                 >
+                  {!isPremium && <Lock className="h-4 w-4 mr-2" />}
                   <Bell className="h-4 w-4 mr-2" />
                   Set Reminder
                 </Button>
