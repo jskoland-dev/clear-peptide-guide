@@ -24,13 +24,24 @@ export function useSubscription() {
         .eq("user_id", user?.id)
         .single();
 
-      if (data && !error) {
+      if (error) {
+        console.error("Subscription fetch error:", error);
+        setIsPremium(false);
+        setLoading(false);
+        return;
+      }
+
+      if (data) {
         const isActive = data.status === "premium" && 
           (!data.current_period_end || new Date(data.current_period_end) > new Date());
+        console.log("Subscription check:", { status: data.status, isPremium: isActive });
         setIsPremium(isActive);
+      } else {
+        setIsPremium(false);
       }
     } catch (error) {
       console.error("Error checking subscription:", error);
+      setIsPremium(false);
     } finally {
       setLoading(false);
     }

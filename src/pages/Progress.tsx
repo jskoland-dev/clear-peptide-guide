@@ -10,6 +10,7 @@ import { useToast } from "@/hooks/use-toast";
 import { AddPhotoDialog } from "@/components/progress/AddPhotoDialog";
 import { PhotoCard } from "@/components/progress/PhotoCard";
 import { CompareDialog } from "@/components/progress/CompareDialog";
+import { UpgradeDialog } from "@/components/progress/UpgradeDialog";
 import { Skeleton } from "@/components/ui/skeleton";
 
 interface ProgressPhoto {
@@ -31,6 +32,7 @@ const Progress = () => {
   const [loading, setLoading] = useState(true);
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [isCompareDialogOpen, setIsCompareDialogOpen] = useState(false);
+  const [isUpgradeDialogOpen, setIsUpgradeDialogOpen] = useState(false);
   const [selectedPhotos, setSelectedPhotos] = useState<string[]>([]);
 
   useEffect(() => {
@@ -39,16 +41,12 @@ const Progress = () => {
     }
   }, [user, authLoading, navigate]);
 
+  // Show upgrade dialog for non-premium users
   useEffect(() => {
     if (!subLoading && !isPremium && user) {
-      toast({
-        title: "Premium Feature",
-        description: "Progress tracking is a premium feature. Please upgrade to access.",
-        variant: "destructive",
-      });
-      navigate("/");
+      setIsUpgradeDialogOpen(true);
     }
-  }, [isPremium, subLoading, user, navigate, toast]);
+  }, [isPremium, subLoading, user]);
 
   useEffect(() => {
     if (user && isPremium) {
@@ -141,8 +139,54 @@ const Progress = () => {
     });
   };
 
-  if (authLoading || subLoading || !user || !isPremium) {
-    return null;
+  // Show loading state while checking auth and subscription
+  if (authLoading || subLoading || !user) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-pulse">Loading...</div>
+      </div>
+    );
+  }
+
+  // For non-premium users, show the main UI with upgrade dialog
+  if (!isPremium) {
+    return (
+      <div className="min-h-screen bg-gradient-to-b from-background to-background/50">
+        <header className="border-b bg-card/50 backdrop-blur-sm sticky top-0 z-10">
+          <div className="container mx-auto px-4 py-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-4">
+                <Button variant="ghost" size="icon" onClick={() => navigate("/")}>
+                  <ArrowLeft className="h-5 w-5" />
+                </Button>
+                <div>
+                  <h1 className="text-2xl font-bold">Progress Tracker</h1>
+                  <p className="text-sm text-muted-foreground">
+                    Premium Feature
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </header>
+
+        <main className="container mx-auto px-4 py-8">
+          <Card className="p-12 text-center blur-sm pointer-events-none">
+            <Camera className="h-12 w-12 mx-auto mb-4 text-muted-foreground" />
+            <h3 className="text-lg font-semibold mb-2">Progress Photos</h3>
+            <p className="text-muted-foreground">Track your transformation</p>
+          </Card>
+        </main>
+
+        <UpgradeDialog 
+          open={isUpgradeDialogOpen} 
+          onOpenChange={(open) => {
+            setIsUpgradeDialogOpen(open);
+            if (!open) navigate("/");
+          }} 
+        />
+      </div>
+    );
   }
 
   return (
