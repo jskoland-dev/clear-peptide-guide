@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -9,21 +9,62 @@ import { useToast } from "@/hooks/use-toast";
 import { Syringe } from "lucide-react";
 
 export default function Auth() {
+  const [searchParams] = useSearchParams();
   const [isLogin, setIsLogin] = useState(true);
   const [isForgotPassword, setIsForgotPassword] = useState(false);
+  const [isResettingPassword, setIsResettingPassword] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [fullName, setFullName] = useState("");
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const { toast } = useToast();
+
+  useEffect(() => {
+    // Check if we're in password reset mode
+    if (searchParams.get("reset") === "true") {
+      setIsResettingPassword(true);
+      setIsLogin(false);
+      setIsForgotPassword(false);
+    }
+  }, [searchParams]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
 
     try {
-      if (isForgotPassword) {
+      if (isResettingPassword) {
+        if (newPassword !== confirmPassword) {
+          toast({
+            title: "Passwords don't match",
+            description: "Please make sure both passwords are the same.",
+            variant: "destructive",
+          });
+          setLoading(false);
+          return;
+        }
+        if (newPassword.length < 6) {
+          toast({
+            title: "Password too short",
+            description: "Password must be at least 6 characters.",
+            variant: "destructive",
+          });
+          setLoading(false);
+          return;
+        }
+        const { error } = await supabase.auth.updateUser({
+          password: newPassword,
+        });
+        if (error) throw error;
+        toast({ 
+          title: "Password updated!", 
+          description: "Your password has been successfully reset." 
+        });
+        navigate("/dashboard");
+      } else if (isForgotPassword) {
         const { error } = await supabase.auth.resetPasswordForEmail(email, {
           redirectTo: `${window.location.origin}/auth?reset=true`,
         });
@@ -78,70 +119,119 @@ export default function Auth() {
             </div>
           </div>
           <CardTitle className="text-2xl">
-            {isForgotPassword ? "Reset Password" : isLogin ? "Welcome Back" : "Create Account"}
+            {isResettingPassword 
+              ? "Set New Password" 
+              : isForgotPassword 
+                ? "Reset Password" 
+                : isLogin 
+                  ? "Welcome Back" 
+                  : "Create Account"
+            }
           </CardTitle>
           <CardDescription>
-            {isForgotPassword 
-              ? "Enter your email to receive a password reset link" 
-              : isLogin 
-                ? "Sign in to access your dose tracking" 
-                : "Start tracking your peptide journey"
+            {isResettingPassword
+              ? "Enter your new password below"
+              : isForgotPassword 
+                ? "Enter your email to receive a password reset link" 
+                : isLogin 
+                  ? "Sign in to access your dose tracking" 
+                  : "Start tracking your peptide journey"
             }
           </CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
-            {!isLogin && !isForgotPassword && (
-              <div className="space-y-2">
-                <Label htmlFor="fullName">Full Name</Label>
-                <Input
-                  id="fullName"
-                  type="text"
-                  value={fullName}
-                  onChange={(e) => setFullName(e.target.value)}
-                  required={!isLogin}
-                  placeholder="John Doe"
-                />
-              </div>
-            )}
-            <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
-              <Input
-                id="email"
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-                placeholder="you@example.com"
-              />
-            </div>
-            {!isForgotPassword && (
-              <div className="space-y-2">
-                <div className="flex items-center justify-between">
-                  <Label htmlFor="password">Password</Label>
-                  {isLogin && (
-                    <button
-                      type="button"
-                      onClick={() => setIsForgotPassword(true)}
-                      className="text-xs text-primary hover:underline"
-                    >
-                      Forgot password?
-                    </button>
-                  )}
+            {isResettingPassword ? (
+              <>
+                <div className="space-y-2">
+                  <Label htmlFor="newPassword">New Password</Label>
+                  <Input
+                    id="newPassword"
+                    type="password"
+                    value={newPassword}
+                    onChange={(e) => setNewPassword(e.target.value)}
+                    required
+                    placeholder="••••••••"
+                    minLength={6}
+                  />
                 </div>
-                <Input
-                  id="password"
-                  type="password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  required
-                  placeholder="••••••••"
-                  minLength={6}
-                />
-              </div>
+                <div className="space-y-2">
+                  <Label htmlFor="confirmPassword">Confirm Password</Label>
+                  <Input
+                    id="confirmPassword"
+                    type="password"
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    required
+                    placeholder="••••••••"
+                    minLength={6}
+                  />
+                </div>
+              </>
+            ) : (
+              <>
+                {!isLogin && !isForgotPassword && (
+                  <div className="space-y-2">
+                    <Label htmlFor="fullName">Full Name</Label>
+                    <Input
+                      id="fullName"
+                      type="text"
+                      value={fullName}
+                      onChange={(e) => setFullName(e.target.value)}
+                      required={!isLogin}
+                      placeholder="John Doe"
+                    />
+                  </div>
+                )}
+                <div className="space-y-2">
+                  <Label htmlFor="email">Email</Label>
+                  <Input
+                    id="email"
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    required
+                    placeholder="you@example.com"
+                  />
+                </div>
+                {!isForgotPassword && (
+                  <div className="space-y-2">
+                    <div className="flex items-center justify-between">
+                      <Label htmlFor="password">Password</Label>
+                      {isLogin && (
+                        <button
+                          type="button"
+                          onClick={() => setIsForgotPassword(true)}
+                          className="text-xs text-primary hover:underline"
+                        >
+                          Forgot password?
+                        </button>
+                      )}
+                    </div>
+                    <Input
+                      id="password"
+                      type="password"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      required
+                      placeholder="••••••••"
+                      minLength={6}
+                    />
+                  </div>
+                )}
+              </>
             )}
             <Button type="submit" className="w-full" disabled={loading}>
-              {loading ? "Loading..." : isForgotPassword ? "Send Reset Link" : isLogin ? "Sign In" : "Sign Up"}
+              {loading 
+                ? "Loading..." 
+                : isResettingPassword 
+                  ? "Reset Password" 
+                  : isForgotPassword 
+                    ? "Send Reset Link" 
+                    : isLogin 
+                      ? "Sign In" 
+                      : "Sign Up"
+              }
             </Button>
           </form>
           <div className="mt-4 text-center text-sm space-y-2">
