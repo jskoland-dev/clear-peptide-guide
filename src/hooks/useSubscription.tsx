@@ -22,9 +22,11 @@ export function useSubscription() {
     try {
       const { data, error } = await supabase
         .from("user_subscriptions")
-        .select("status, current_period_end")
+        .select("status, current_period_end, updated_at")
         .eq("user_id", user?.id)
-        .single();
+        .order("updated_at", { ascending: false })
+        .limit(1)
+        .maybeSingle();
 
       if (error) {
         console.error("Subscription fetch error:", error);
