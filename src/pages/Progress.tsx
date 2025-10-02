@@ -41,12 +41,12 @@ const Progress = () => {
     }
   }, [user, authLoading, navigate]);
 
-  // Show upgrade dialog for non-premium users
+  // Show upgrade dialog for non-premium users (only after loading completes)
   useEffect(() => {
-    if (!subLoading && !isPremium && user) {
+    if (!authLoading && !subLoading && !isPremium && user) {
       setIsUpgradeDialogOpen(true);
     }
-  }, [isPremium, subLoading, user]);
+  }, [isPremium, subLoading, authLoading, user]);
 
   useEffect(() => {
     if (user && isPremium) {
@@ -156,7 +156,7 @@ const Progress = () => {
           <div className="container mx-auto px-4 py-4">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-4">
-                <Button variant="ghost" size="icon" onClick={() => navigate("/")}>
+                <Button variant="ghost" size="icon" onClick={() => navigate(-1)}>
                   <ArrowLeft className="h-5 w-5" />
                 </Button>
                 <div>
@@ -195,7 +195,7 @@ const Progress = () => {
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
-              <Button variant="ghost" size="icon" onClick={() => navigate("/")}>
+              <Button variant="ghost" size="icon" onClick={() => navigate(-1)}>
                 <ArrowLeft className="h-5 w-5" />
               </Button>
               <div>
