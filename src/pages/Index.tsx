@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { useNavigate } from "react-router-dom";
-import { Calculator, BookOpen, Beaker, Droplet, Target, GraduationCap, Check, X, LogIn, Bot, Sparkles, Camera, Activity } from "lucide-react";
+import { Calculator, BookOpen, Beaker, Droplet, Target, GraduationCap, Check, X, LogIn, Bot, Sparkles, Camera, Activity, Users } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 
 const Index = () => {
@@ -119,6 +119,10 @@ const Index = () => {
                   <div className="flex items-start gap-3">
                     <Check className="h-5 w-5 text-primary mt-0.5 shrink-0" />
                     <span className="font-medium">Daily log tracker (mood, sleep, energy)</span>
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <Check className="h-5 w-5 text-primary mt-0.5 shrink-0" />
+                    <span className="font-medium">Community protocol sharing</span>
                   </div>
                   <div className="flex items-start gap-3">
                     <Check className="h-5 w-5 text-primary mt-0.5 shrink-0" />
@@ -325,6 +329,17 @@ const Index = () => {
                 Track your mood, sleep, energy, and side effects in under 30 seconds. Visualize patterns and correlate with your peptide usage.
               </p>
               <Badge className="mt-4">Free Tool</Badge>
+            </Card>
+
+            <Card className="p-8 card-hover border-secondary/10 cursor-pointer" onClick={() => navigate('/community')}>
+              <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-secondary to-secondary/50 flex items-center justify-center mb-6 shadow-lg">
+                <Users className="w-7 h-7 text-white" />
+              </div>
+              <h3 className="text-xl font-bold mb-3">Community Protocols</h3>
+              <p className="text-muted-foreground leading-relaxed">
+                Share and discover real peptide experiences from the community. Read detailed protocols, results, and side effects.
+              </p>
+              <Badge className="mt-4">Free Access</Badge>
             </Card>
           </div>
         </div>

@@ -14,6 +14,66 @@ export type Database = {
   }
   public: {
     Tables: {
+      community_protocols: {
+        Row: {
+          created_at: string
+          dosages: Json
+          downvotes: number
+          duration: string
+          flag_reason: string | null
+          goal: Database["public"]["Enums"]["protocol_goal"]
+          id: string
+          is_flagged: boolean
+          notes: string | null
+          peptides_used: string[]
+          results: string
+          schedule: string
+          side_effects: string | null
+          title: string
+          updated_at: string
+          upvotes: number
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          dosages: Json
+          downvotes?: number
+          duration: string
+          flag_reason?: string | null
+          goal: Database["public"]["Enums"]["protocol_goal"]
+          id?: string
+          is_flagged?: boolean
+          notes?: string | null
+          peptides_used: string[]
+          results: string
+          schedule: string
+          side_effects?: string | null
+          title: string
+          updated_at?: string
+          upvotes?: number
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          dosages?: Json
+          downvotes?: number
+          duration?: string
+          flag_reason?: string | null
+          goal?: Database["public"]["Enums"]["protocol_goal"]
+          id?: string
+          is_flagged?: boolean
+          notes?: string | null
+          peptides_used?: string[]
+          results?: string
+          schedule?: string
+          side_effects?: string | null
+          title?: string
+          updated_at?: string
+          upvotes?: number
+          user_id?: string
+        }
+        Relationships: []
+      }
       daily_logs: {
         Row: {
           body_fat_percentage: number | null
@@ -212,6 +272,47 @@ export type Database = {
         }
         Relationships: []
       }
+      protocol_comments: {
+        Row: {
+          comment: string
+          created_at: string
+          flag_reason: string | null
+          id: string
+          is_flagged: boolean
+          protocol_id: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          comment: string
+          created_at?: string
+          flag_reason?: string | null
+          id?: string
+          is_flagged?: boolean
+          protocol_id: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          comment?: string
+          created_at?: string
+          flag_reason?: string | null
+          id?: string
+          is_flagged?: boolean
+          protocol_id?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "protocol_comments_protocol_id_fkey"
+            columns: ["protocol_id"]
+            isOneToOne: false
+            referencedRelation: "community_protocols"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       protocol_reminders: {
         Row: {
           created_at: string
@@ -253,6 +354,38 @@ export type Database = {
             columns: ["user_id"]
             isOneToOne: false
             referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      protocol_votes: {
+        Row: {
+          created_at: string
+          id: string
+          protocol_id: string
+          user_id: string
+          vote_type: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          protocol_id: string
+          user_id: string
+          vote_type: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          protocol_id?: string
+          user_id?: string
+          vote_type?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "protocol_votes_protocol_id_fkey"
+            columns: ["protocol_id"]
+            isOneToOne: false
+            referencedRelation: "community_protocols"
             referencedColumns: ["id"]
           },
         ]
@@ -301,6 +434,35 @@ export type Database = {
           warnings?: string[]
         }
         Relationships: []
+      }
+      saved_community_protocols: {
+        Row: {
+          created_at: string
+          id: string
+          protocol_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          protocol_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          protocol_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "saved_community_protocols_protocol_id_fkey"
+            columns: ["protocol_id"]
+            isOneToOne: false
+            referencedRelation: "community_protocols"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       user_saved_protocols: {
         Row: {
@@ -467,6 +629,16 @@ export type Database = {
       }
     }
     Enums: {
+      protocol_goal:
+        | "fat_loss"
+        | "muscle_gain"
+        | "recovery"
+        | "anti_aging"
+        | "cognitive"
+        | "sleep"
+        | "skin_health"
+        | "injury_healing"
+        | "general_wellness"
       subscription_status: "free" | "premium"
     }
     CompositeTypes: {
@@ -595,6 +767,17 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
+      protocol_goal: [
+        "fat_loss",
+        "muscle_gain",
+        "recovery",
+        "anti_aging",
+        "cognitive",
+        "sleep",
+        "skin_health",
+        "injury_healing",
+        "general_wellness",
+      ],
       subscription_status: ["free", "premium"],
     },
   },

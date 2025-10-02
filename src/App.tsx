@@ -15,6 +15,7 @@ import AIAssistant from "./pages/AIAssistant";
 import Progress from "./pages/Progress";
 import Analytics from "./pages/Analytics";
 import DailyLog from "./pages/DailyLog";
+import Community from "./pages/Community";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -38,6 +39,7 @@ const App = () => (
           <Route path="/progress" element={<Progress />} />
           <Route path="/analytics" element={<Analytics />} />
           <Route path="/daily-log" element={<DailyLog />} />
+          <Route path="/community" element={<Community />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
