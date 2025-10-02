@@ -251,6 +251,7 @@ export default function MyVials() {
                     key={vial.id}
                     vial={vial}
                     onStatusUpdate={handleStatusUpdate}
+                    onDelete={fetchVials}
                   />
                 ))}
               </div>
@@ -269,6 +270,7 @@ export default function MyVials() {
                     key={vial.id}
                     vial={vial}
                     onStatusUpdate={handleStatusUpdate}
+                    onDelete={fetchVials}
                   />
                 ))}
               </div>

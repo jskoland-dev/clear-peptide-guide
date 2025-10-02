@@ -1,8 +1,23 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
-import { AlertCircle, FlaskConical } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import { AlertCircle, FlaskConical, Trash2 } from "lucide-react";
 import { format } from "date-fns";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
+import { useState } from "react";
 
 interface Vial {
   id: string;
@@ -20,7 +35,35 @@ interface VialTrackerProps {
   onUpdate: () => void;
 }
 
-export function VialTracker({ vials }: VialTrackerProps) {
+export function VialTracker({ vials, onUpdate }: VialTrackerProps) {
+  const { toast } = useToast();
+  const [deletingId, setDeletingId] = useState<string | null>(null);
+
+  const handleDelete = async (vialId: string) => {
+    setDeletingId(vialId);
+    
+    const { error } = await supabase
+      .from("vials")
+      .delete()
+      .eq("id", vialId);
+
+    if (error) {
+      toast({
+        title: "Error",
+        description: "Failed to delete vial. Please try again.",
+        variant: "destructive",
+      });
+    } else {
+      toast({
+        title: "Success",
+        description: "Vial deleted successfully.",
+      });
+      onUpdate();
+    }
+    
+    setDeletingId(null);
+  };
+
   if (vials.length === 0) {
     return (
       <Card>
@@ -50,15 +93,46 @@ export function VialTracker({ vials }: VialTrackerProps) {
 
         return (
           <Card key={vial.id} className="hover-lift">
-            <CardHeader>
-              <div className="flex justify-between items-start">
-                <CardTitle className="text-lg flex items-center gap-2">
-                  <FlaskConical className="h-5 w-5 text-primary" />
-                  {vial.peptide_name}
-                </CardTitle>
+          <CardHeader>
+            <div className="flex justify-between items-start">
+              <CardTitle className="text-lg flex items-center gap-2">
+                <FlaskConical className="h-5 w-5 text-primary" />
+                {vial.peptide_name}
+              </CardTitle>
+              <div className="flex items-center gap-2">
                 <Badge variant={status.color}>{status.label}</Badge>
+                <AlertDialog>
+                  <AlertDialogTrigger asChild>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="h-8 w-8 text-destructive hover:text-destructive"
+                      disabled={deletingId === vial.id}
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
+                  </AlertDialogTrigger>
+                  <AlertDialogContent>
+                    <AlertDialogHeader>
+                      <AlertDialogTitle>Delete Vial</AlertDialogTitle>
+                      <AlertDialogDescription>
+                        Are you sure you want to delete this vial? This action cannot be undone.
+                      </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                      <AlertDialogCancel>Cancel</AlertDialogCancel>
+                      <AlertDialogAction
+                        onClick={() => handleDelete(vial.id)}
+                        className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                      >
+                        Delete
+                      </AlertDialogAction>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
               </div>
-            </CardHeader>
+            </div>
+          </CardHeader>
             <CardContent className="space-y-4">
               <div>
                 <div className="flex justify-between text-sm mb-2">

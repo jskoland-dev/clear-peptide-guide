@@ -7,10 +7,23 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { FlaskConical, MoreVertical, CheckCircle, XCircle, Clock } from "lucide-react";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+import { FlaskConical, MoreVertical, CheckCircle, XCircle, Clock, Trash2 } from "lucide-react";
 import { format, differenceInDays, differenceInHours, isPast } from "date-fns";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
 
 interface Vial {
   id: string;
@@ -27,11 +40,40 @@ interface Vial {
 interface VialCardProps {
   vial: Vial;
   onStatusUpdate: (vialId: string, status: string) => void;
+  onDelete?: () => void;
 }
 
-export function VialCard({ vial, onStatusUpdate }: VialCardProps) {
+export function VialCard({ vial, onStatusUpdate, onDelete }: VialCardProps) {
+  const { toast } = useToast();
   const [timeRemaining, setTimeRemaining] = useState("");
   const [statusColor, setStatusColor] = useState<"default" | "warning" | "destructive">("default");
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+
+  const handleDelete = async () => {
+    setIsDeleting(true);
+    
+    const { error } = await supabase
+      .from("vials")
+      .delete()
+      .eq("id", vial.id);
+
+    if (error) {
+      toast({
+        title: "Error",
+        description: "Failed to delete vial. Please try again.",
+        variant: "destructive",
+      });
+      setIsDeleting(false);
+    } else {
+      toast({
+        title: "Success",
+        description: "Vial deleted successfully.",
+      });
+      setShowDeleteDialog(false);
+      if (onDelete) onDelete();
+    }
+  };
 
   useEffect(() => {
     if (!vial.expiration_date) return;
@@ -124,6 +166,14 @@ export function VialCard({ vial, onStatusUpdate }: VialCardProps) {
                     <XCircle className="h-4 w-4 mr-2" />
                     Mark as Disposed
                   </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem 
+                    onClick={() => setShowDeleteDialog(true)}
+                    className="text-destructive focus:text-destructive"
+                  >
+                    <Trash2 className="h-4 w-4 mr-2" />
+                    Delete Vial
+                  </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
             )}
@@ -190,6 +240,27 @@ export function VialCard({ vial, onStatusUpdate }: VialCardProps) {
           </p>
         )}
       </CardContent>
+
+      <AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete Vial</AlertDialogTitle>
+            <AlertDialogDescription>
+              Are you sure you want to delete this vial? This action cannot be undone and will permanently remove all associated data.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={isDeleting}>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleDelete}
+              disabled={isDeleting}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              {isDeleting ? "Deleting..." : "Delete"}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </Card>
   );
 }
