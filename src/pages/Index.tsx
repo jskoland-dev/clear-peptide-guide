@@ -116,12 +116,19 @@ const Index = () => {
                     <Check className="h-5 w-5 text-primary mt-0.5 shrink-0" />
                     <span className="font-medium">Browse protocol library (view only)</span>
                   </div>
+                  <div className="flex items-start gap-3">
+                    <Check className="h-5 w-5 text-primary mt-0.5 shrink-0" />
+                    <div>
+                      <span className="font-medium">5 Free AI Messages</span>
+                      <p className="text-xs text-muted-foreground mt-0.5">Monthly limit - Try the AI Assistant!</p>
+                    </div>
+                  </div>
                   <div className="pt-2 border-t">
                     <p className="text-sm text-muted-foreground italic">All premium features locked:</p>
                   </div>
                   <div className="flex items-start gap-3">
                     <X className="h-5 w-5 text-muted-foreground mt-0.5 shrink-0" />
-                    <span className="text-muted-foreground">AI Dosing Assistant</span>
+                    <span className="text-muted-foreground">Unlimited AI messages (100/month)</span>
                   </div>
                   <div className="flex items-start gap-3">
                     <X className="h-5 w-5 text-muted-foreground mt-0.5 shrink-0" />
@@ -130,6 +137,10 @@ const Index = () => {
                   <div className="flex items-start gap-3">
                     <X className="h-5 w-5 text-muted-foreground mt-0.5 shrink-0" />
                     <span className="text-muted-foreground">Vial inventory management</span>
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <X className="h-5 w-5 text-muted-foreground mt-0.5 shrink-0" />
+                    <span className="text-muted-foreground">Progress photo tracking</span>
                   </div>
                   <div className="flex items-start gap-3">
                     <X className="h-5 w-5 text-muted-foreground mt-0.5 shrink-0" />
