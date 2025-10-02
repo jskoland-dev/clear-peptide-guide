@@ -1,12 +1,13 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
+import { useSubscription } from "@/hooks/useSubscription";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LineChart, Line, PieChart, Pie, Cell } from "recharts";
-import { Activity, Syringe, FlaskConical, TrendingUp, LogOut, Plus, BookOpen } from "lucide-react";
+import { Activity, Syringe, FlaskConical, TrendingUp, LogOut, Plus, BookOpen, Lock, Sparkles } from "lucide-react";
 import { InjectionLog } from "@/components/dashboard/InjectionLog";
 import { VialTracker } from "@/components/dashboard/VialTracker";
 import { AddInjectionDialog } from "@/components/dashboard/AddInjectionDialog";
@@ -35,6 +36,7 @@ interface Vial {
 
 export default function Dashboard() {
   const { user, loading, signOut } = useAuth();
+  const { isPremium, loading: subscriptionLoading } = useSubscription();
   const navigate = useNavigate();
   const [injections, setInjections] = useState<Injection[]>([]);
   const [vials, setVials] = useState<Vial[]>([]);
@@ -114,10 +116,152 @@ export default function Dashboard() {
 
   const COLORS = ['hsl(var(--primary))', 'hsl(var(--secondary))', 'hsl(var(--accent))', 'hsl(var(--chart-1))', 'hsl(var(--chart-2))'];
 
-  if (loading) {
+  if (loading || subscriptionLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="animate-pulse">Loading...</div>
+      </div>
+    );
+  }
+
+  // Premium Gate - Show upgrade prompt if not premium
+  if (!isPremium) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-primary/5 via-background to-secondary/5">
+        <div className="container mx-auto p-6">
+          {/* Header */}
+          <div className="flex justify-between items-center mb-8">
+            <div>
+              <h1 className="text-4xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
+                Dose Tracker Dashboard
+              </h1>
+              <p className="text-muted-foreground mt-2">Upgrade to unlock tracking features</p>
+            </div>
+            <div className="flex gap-2">
+              <Button variant="outline" onClick={() => navigate("/")}>
+                Home
+              </Button>
+              <Button variant="outline" onClick={signOut}>
+                <LogOut className="h-4 w-4 mr-2" />
+                Sign Out
+              </Button>
+            </div>
+          </div>
+
+          {/* Upgrade Card */}
+          <Card className="max-w-4xl mx-auto border-2 border-primary/20 bg-gradient-to-br from-primary/5 via-background to-secondary/5">
+            <CardHeader className="text-center pb-4">
+              <div className="w-20 h-20 mx-auto mb-4 rounded-full bg-gradient-to-br from-primary to-secondary flex items-center justify-center">
+                <Lock className="w-10 h-10 text-white" />
+              </div>
+              <CardTitle className="text-3xl mb-2">Unlock Premium Tracking</CardTitle>
+              <CardDescription className="text-lg">
+                Get full access to dose tracking, vial management, and analytics
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              {/* Preview Stats */}
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div className="relative">
+                  <Card className="p-4 bg-muted/50">
+                    <div className="absolute inset-0 backdrop-blur-sm bg-background/50 rounded-lg flex items-center justify-center">
+                      <Lock className="w-6 h-6 text-muted-foreground" />
+                    </div>
+                    <div className="text-sm font-medium text-muted-foreground">Total Injections</div>
+                    <div className="text-2xl font-bold mt-1">--</div>
+                  </Card>
+                </div>
+                <div className="relative">
+                  <Card className="p-4 bg-muted/50">
+                    <div className="absolute inset-0 backdrop-blur-sm bg-background/50 rounded-lg flex items-center justify-center">
+                      <Lock className="w-6 h-6 text-muted-foreground" />
+                    </div>
+                    <div className="text-sm font-medium text-muted-foreground">Average Dose</div>
+                    <div className="text-2xl font-bold mt-1">--</div>
+                  </Card>
+                </div>
+                <div className="relative">
+                  <Card className="p-4 bg-muted/50">
+                    <div className="absolute inset-0 backdrop-blur-sm bg-background/50 rounded-lg flex items-center justify-center">
+                      <Lock className="w-6 h-6 text-muted-foreground" />
+                    </div>
+                    <div className="text-sm font-medium text-muted-foreground">Active Vials</div>
+                    <div className="text-2xl font-bold mt-1">--</div>
+                  </Card>
+                </div>
+                <div className="relative">
+                  <Card className="p-4 bg-muted/50">
+                    <div className="absolute inset-0 backdrop-blur-sm bg-background/50 rounded-lg flex items-center justify-center">
+                      <Lock className="w-6 h-6 text-muted-foreground" />
+                    </div>
+                    <div className="text-sm font-medium text-muted-foreground">Low Vials</div>
+                    <div className="text-2xl font-bold mt-1">--</div>
+                  </Card>
+                </div>
+              </div>
+
+              {/* Features List */}
+              <div className="grid md:grid-cols-2 gap-4 py-6">
+                <div className="flex items-start gap-3">
+                  <Sparkles className="w-5 h-5 text-primary mt-1 shrink-0" />
+                  <div>
+                    <div className="font-semibold">Track Every Injection</div>
+                    <div className="text-sm text-muted-foreground">Log dose, site, date, and notes</div>
+                  </div>
+                </div>
+                <div className="flex items-start gap-3">
+                  <Sparkles className="w-5 h-5 text-primary mt-1 shrink-0" />
+                  <div>
+                    <div className="font-semibold">Manage Vial Inventory</div>
+                    <div className="text-sm text-muted-foreground">Track remaining amounts & expiration</div>
+                  </div>
+                </div>
+                <div className="flex items-start gap-3">
+                  <Sparkles className="w-5 h-5 text-primary mt-1 shrink-0" />
+                  <div>
+                    <div className="font-semibold">Visual Analytics</div>
+                    <div className="text-sm text-muted-foreground">Charts showing usage patterns</div>
+                  </div>
+                </div>
+                <div className="flex items-start gap-3">
+                  <Sparkles className="w-5 h-5 text-primary mt-1 shrink-0" />
+                  <div>
+                    <div className="font-semibold">Save Protocols</div>
+                    <div className="text-sm text-muted-foreground">Bookmark your favorite routines</div>
+                  </div>
+                </div>
+              </div>
+
+              {/* CTA */}
+              <div className="text-center space-y-4 pt-4">
+                <div className="text-2xl font-bold">$9<span className="text-lg text-muted-foreground font-normal">/month</span></div>
+                <Button size="lg" className="w-full md:w-auto px-8" onClick={() => navigate("/")}>
+                  <Sparkles className="w-4 h-4 mr-2" />
+                  Upgrade to Premium
+                </Button>
+                <p className="text-sm text-muted-foreground">
+                  Already premium? Refresh the page or sign out and back in.
+                </p>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Free Features Reminder */}
+          <div className="text-center mt-8 text-muted-foreground">
+            <p className="mb-2">You still have access to:</p>
+            <div className="flex flex-wrap justify-center gap-2">
+              <Button variant="outline" size="sm" onClick={() => navigate("/calculator")}>
+                Calculator
+              </Button>
+              <Button variant="outline" size="sm" onClick={() => navigate("/learn")}>
+                Learning Resources
+              </Button>
+              <Button variant="outline" size="sm" onClick={() => navigate("/protocols")}>
+                Browse Protocols
+              </Button>
+            </div>
+          </div>
+        </div>
       </div>
     );
   }

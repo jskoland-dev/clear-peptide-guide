@@ -106,31 +106,34 @@ const Index = () => {
                 <div className="space-y-3">
                   <div className="flex items-start gap-3">
                     <Check className="h-5 w-5 text-primary mt-0.5 shrink-0" />
-                    <span>Peptide dose calculator</span>
+                    <span className="font-medium">Peptide dose calculator</span>
                   </div>
                   <div className="flex items-start gap-3">
                     <Check className="h-5 w-5 text-primary mt-0.5 shrink-0" />
-                    <span>Educational resources</span>
+                    <span className="font-medium">Educational resources & guides</span>
                   </div>
                   <div className="flex items-start gap-3">
                     <Check className="h-5 w-5 text-primary mt-0.5 shrink-0" />
-                    <span>Browse protocol library</span>
+                    <span className="font-medium">Browse protocol library (view only)</span>
+                  </div>
+                  <div className="pt-2 border-t">
+                    <p className="text-sm text-muted-foreground italic">All premium features locked:</p>
                   </div>
                   <div className="flex items-start gap-3">
                     <X className="h-5 w-5 text-muted-foreground mt-0.5 shrink-0" />
-                    <span className="text-muted-foreground">Save protocols</span>
+                    <span className="text-muted-foreground">Dose tracking & history</span>
                   </div>
                   <div className="flex items-start gap-3">
                     <X className="h-5 w-5 text-muted-foreground mt-0.5 shrink-0" />
-                    <span className="text-muted-foreground">Set reminders</span>
+                    <span className="text-muted-foreground">Vial inventory management</span>
                   </div>
                   <div className="flex items-start gap-3">
                     <X className="h-5 w-5 text-muted-foreground mt-0.5 shrink-0" />
-                    <span className="text-muted-foreground">Track vials</span>
+                    <span className="text-muted-foreground">Save protocols & set reminders</span>
                   </div>
                   <div className="flex items-start gap-3">
                     <X className="h-5 w-5 text-muted-foreground mt-0.5 shrink-0" />
-                    <span className="text-muted-foreground">Injection history</span>
+                    <span className="text-muted-foreground">Analytics & insights</span>
                   </div>
                 </div>
 
@@ -159,23 +162,27 @@ const Index = () => {
                 <div className="space-y-3">
                   <div className="flex items-start gap-3">
                     <Check className="h-5 w-5 text-primary mt-0.5 shrink-0" />
-                    <span className="font-medium">Everything in Free, plus:</span>
+                    <span className="font-semibold">Everything in Free, plus:</span>
                   </div>
                   <div className="flex items-start gap-3">
                     <Check className="h-5 w-5 text-primary mt-0.5 shrink-0" />
-                    <span>Save unlimited protocols</span>
+                    <span className="font-medium">Complete dose tracking dashboard</span>
                   </div>
                   <div className="flex items-start gap-3">
                     <Check className="h-5 w-5 text-primary mt-0.5 shrink-0" />
-                    <span>Set custom reminders</span>
+                    <span className="font-medium">Full injection history & analytics</span>
                   </div>
                   <div className="flex items-start gap-3">
                     <Check className="h-5 w-5 text-primary mt-0.5 shrink-0" />
-                    <span>Track vials & inventory</span>
+                    <span className="font-medium">Vial inventory & expiration tracking</span>
                   </div>
                   <div className="flex items-start gap-3">
                     <Check className="h-5 w-5 text-primary mt-0.5 shrink-0" />
-                    <span>Full injection history</span>
+                    <span className="font-medium">Save unlimited protocols</span>
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <Check className="h-5 w-5 text-primary mt-0.5 shrink-0" />
+                    <span className="font-medium">Set custom reminders</span>
                   </div>
                   <div className="flex items-start gap-3">
                     <Check className="h-5 w-5 text-primary mt-0.5 shrink-0" />

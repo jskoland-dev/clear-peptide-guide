@@ -1,10 +1,12 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
+import { useSubscription } from "@/hooks/useSubscription";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { ArrowLeft, FlaskConical } from "lucide-react";
+import { ArrowLeft, FlaskConical, Lock, Sparkles } from "lucide-react";
 import { AddVialDialog } from "@/components/dashboard/AddVialDialog";
 import { VialCard } from "@/components/vials/VialCard";
 import { useToast } from "@/hooks/use-toast";
@@ -24,6 +26,7 @@ interface Vial {
 
 export default function MyVials() {
   const { user, loading } = useAuth();
+  const { isPremium, loading: subscriptionLoading } = useSubscription();
   const navigate = useNavigate();
   const { toast } = useToast();
   const [vials, setVials] = useState<Vial[]>([]);
@@ -109,10 +112,92 @@ export default function MyVials() {
     (v) => v.status === "finished" || v.status === "disposed"
   );
 
-  if (loading || fetchingVials) {
+  if (loading || subscriptionLoading || fetchingVials) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="animate-pulse">Loading your vials...</div>
+      </div>
+    );
+  }
+
+  // Premium Gate
+  if (!isPremium) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-primary/5 via-background to-secondary/5">
+        <div className="container mx-auto p-6">
+          {/* Header */}
+          <div className="flex items-center justify-between mb-8">
+            <div className="flex items-center gap-4">
+              <Button variant="ghost" size="icon" onClick={() => navigate("/dashboard")}>
+                <ArrowLeft className="h-5 w-5" />
+              </Button>
+              <div>
+                <h1 className="text-4xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
+                  My Vials
+                </h1>
+                <p className="text-muted-foreground mt-2">Upgrade to unlock vial tracking</p>
+              </div>
+            </div>
+          </div>
+
+          {/* Upgrade Card */}
+          <Card className="max-w-3xl mx-auto border-2 border-primary/20 bg-gradient-to-br from-primary/5 via-background to-secondary/5">
+            <CardHeader className="text-center pb-4">
+              <div className="w-20 h-20 mx-auto mb-4 rounded-full bg-gradient-to-br from-primary to-secondary flex items-center justify-center">
+                <FlaskConical className="w-10 h-10 text-white" />
+              </div>
+              <CardTitle className="text-3xl mb-2">Track Your Vial Inventory</CardTitle>
+              <CardDescription className="text-lg">
+                Never inject expired peptides or run out unexpectedly
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              {/* Features */}
+              <div className="space-y-4">
+                <div className="flex items-start gap-3">
+                  <Sparkles className="w-5 h-5 text-primary mt-1 shrink-0" />
+                  <div>
+                    <div className="font-semibold">Log Reconstitution Details</div>
+                    <div className="text-sm text-muted-foreground">Track peptide amount, BAC water, and mixing date</div>
+                  </div>
+                </div>
+                <div className="flex items-start gap-3">
+                  <Sparkles className="w-5 h-5 text-primary mt-1 shrink-0" />
+                  <div>
+                    <div className="font-semibold">Expiration Alerts</div>
+                    <div className="text-sm text-muted-foreground">Get notified 2 days before vials expire</div>
+                  </div>
+                </div>
+                <div className="flex items-start gap-3">
+                  <Sparkles className="w-5 h-5 text-primary mt-1 shrink-0" />
+                  <div>
+                    <div className="font-semibold">Auto-Calculate Remaining Amount</div>
+                    <div className="text-sm text-muted-foreground">Automatically deducts as you log injections</div>
+                  </div>
+                </div>
+                <div className="flex items-start gap-3">
+                  <Sparkles className="w-5 h-5 text-primary mt-1 shrink-0" />
+                  <div>
+                    <div className="font-semibold">Organized Archive</div>
+                    <div className="text-sm text-muted-foreground">Keep history of finished and expired vials</div>
+                  </div>
+                </div>
+              </div>
+
+              {/* CTA */}
+              <div className="text-center space-y-4 pt-4 border-t">
+                <div className="text-2xl font-bold">$9<span className="text-lg text-muted-foreground font-normal">/month</span></div>
+                <Button size="lg" className="w-full md:w-auto px-8" onClick={() => navigate("/")}>
+                  <Sparkles className="w-4 h-4 mr-2" />
+                  Upgrade to Premium
+                </Button>
+                <p className="text-sm text-muted-foreground">
+                  Includes full dashboard, injection tracking, and protocol saving
+                </p>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
       </div>
     );
   }
