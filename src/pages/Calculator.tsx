@@ -4,9 +4,11 @@ import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft, Info, Calculator as CalcIcon, Beaker } from "lucide-react";
+import { ArrowLeft, Info, Calculator as CalcIcon, Beaker, Layers } from "lucide-react";
 import { toast } from "sonner";
+import { StackCalculator } from "@/components/calculator/StackCalculator";
 
 const Calculator = () => {
   const navigate = useNavigate();
@@ -67,11 +69,24 @@ const Calculator = () => {
             <span className="gradient-text">Peptide Dose Calculator</span>
           </h1>
           <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-            Calculate your exact peptide dose with step-by-step guidance
+            Calculate doses for single peptides or complete stacks
           </p>
         </div>
 
-        <div className="grid lg:grid-cols-2 gap-8">
+        <Tabs defaultValue="single" className="w-full">
+          <TabsList className="grid w-full max-w-md mx-auto mb-8 grid-cols-2">
+            <TabsTrigger value="single" className="flex items-center gap-2">
+              <Beaker className="w-4 h-4" />
+              Single Peptide
+            </TabsTrigger>
+            <TabsTrigger value="stack" className="flex items-center gap-2">
+              <Layers className="w-4 h-4" />
+              Stack Calculator
+            </TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="single">
+            <div className="grid lg:grid-cols-2 gap-8">
           {/* Calculator Form */}
           <Card className="p-8 space-y-6">
             <div>
@@ -226,6 +241,12 @@ const Calculator = () => {
             </Card>
           </div>
         </div>
+          </TabsContent>
+
+          <TabsContent value="stack">
+            <StackCalculator />
+          </TabsContent>
+        </Tabs>
       </div>
     </div>
   );
