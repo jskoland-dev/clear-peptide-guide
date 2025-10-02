@@ -21,6 +21,7 @@ export function AddVialDialog({ onSuccess }: AddVialDialogProps) {
     bacWater: "",
     reconstitutionDate: new Date().toISOString().split('T')[0],
     expirationDate: "",
+    cost: "",
     notes: "",
   });
   const { toast } = useToast();
@@ -43,6 +44,7 @@ export function AddVialDialog({ onSuccess }: AddVialDialogProps) {
         bac_water_ml: parseFloat(formData.bacWater),
         reconstitution_date: formData.reconstitutionDate,
         expiration_date: formData.expirationDate || null,
+        cost: formData.cost ? parseFloat(formData.cost) : 0,
         notes: formData.notes || null,
       });
 
@@ -56,6 +58,7 @@ export function AddVialDialog({ onSuccess }: AddVialDialogProps) {
         bacWater: "",
         reconstitutionDate: new Date().toISOString().split('T')[0],
         expirationDate: "",
+        cost: "",
         notes: "",
       });
       onSuccess();
@@ -135,6 +138,18 @@ export function AddVialDialog({ onSuccess }: AddVialDialogProps) {
               type="date"
               value={formData.expirationDate}
               onChange={(e) => setFormData(prev => ({ ...prev, expirationDate: e.target.value }))}
+            />
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="cost">Cost (Optional)</Label>
+            <Input
+              id="cost"
+              type="number"
+              step="0.01"
+              value={formData.cost}
+              onChange={(e) => setFormData(prev => ({ ...prev, cost: e.target.value }))}
+              placeholder="0.00"
             />
           </div>
 

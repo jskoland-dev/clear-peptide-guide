@@ -332,6 +332,7 @@ export type Database = {
       vials: {
         Row: {
           bac_water_ml: number
+          cost: number | null
           created_at: string
           expiration_date: string | null
           id: string
@@ -346,6 +347,7 @@ export type Database = {
         }
         Insert: {
           bac_water_ml: number
+          cost?: number | null
           created_at?: string
           expiration_date?: string | null
           id?: string
@@ -360,6 +362,7 @@ export type Database = {
         }
         Update: {
           bac_water_ml?: number
+          cost?: number | null
           created_at?: string
           expiration_date?: string | null
           id?: string

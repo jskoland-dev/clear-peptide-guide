@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LineChart, Line, PieChart, Pie, Cell } from "recharts";
-import { Activity, Syringe, FlaskConical, TrendingUp, LogOut, Plus, BookOpen, Lock, Sparkles, Bot, Camera } from "lucide-react";
+import { Activity, Syringe, FlaskConical, TrendingUp, LogOut, Plus, BookOpen, Lock, Sparkles, Bot, Camera, BarChart3 } from "lucide-react";
 import { InjectionLog } from "@/components/dashboard/InjectionLog";
 import { VialTracker } from "@/components/dashboard/VialTracker";
 import { AddInjectionDialog } from "@/components/dashboard/AddInjectionDialog";
@@ -138,6 +138,12 @@ export default function Dashboard() {
             </p>
           </div>
           <div className="flex gap-2">
+            {isPremium && (
+              <Button variant="outline" onClick={() => navigate("/analytics")}>
+                <BarChart3 className="h-4 w-4 mr-2" />
+                Analytics
+              </Button>
+            )}
             <Button variant="outline" onClick={() => navigate("/ai-assistant")}>
               <Bot className="h-4 w-4 mr-2" />
               AI Assistant
