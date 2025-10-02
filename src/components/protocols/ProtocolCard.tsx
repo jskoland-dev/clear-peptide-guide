@@ -38,6 +38,12 @@ export function ProtocolCard({ protocol, isSaved, onSaveToggle }: ProtocolCardPr
       "Muscle Growth": "bg-orange-500/10 text-orange-700 dark:text-orange-400",
       "Weight Loss": "bg-pink-500/10 text-pink-700 dark:text-pink-400",
       "Fat Loss": "bg-red-500/10 text-red-700 dark:text-red-400",
+      "Longevity": "bg-indigo-500/10 text-indigo-700 dark:text-indigo-400",
+      "Anti-Aging": "bg-violet-500/10 text-violet-700 dark:text-violet-400",
+      "Cognitive Enhancement": "bg-cyan-500/10 text-cyan-700 dark:text-cyan-400",
+      "Sexual Health": "bg-rose-500/10 text-rose-700 dark:text-rose-400",
+      "Immune Support": "bg-emerald-500/10 text-emerald-700 dark:text-emerald-400",
+      "Tanning & Sexual Health": "bg-amber-500/10 text-amber-700 dark:text-amber-400",
     };
     return colors[category] || "bg-gray-500/10 text-gray-700 dark:text-gray-400";
   };

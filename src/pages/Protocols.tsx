@@ -26,7 +26,7 @@ interface SavedProtocol {
   protocol_id: string;
 }
 
-const CATEGORIES = ["All", "Injury Recovery", "Tissue Repair", "Growth Hormone", "Muscle Growth", "Weight Loss", "Fat Loss"];
+const CATEGORIES = ["All", "Injury Recovery", "Tissue Repair", "Growth Hormone", "Muscle Growth", "Weight Loss", "Fat Loss", "Longevity", "Anti-Aging", "Cognitive Enhancement", "Sexual Health", "Immune Support", "Tanning & Sexual Health"];
 
 export default function Protocols() {
   const { user, loading } = useAuth();
@@ -113,7 +113,7 @@ export default function Protocols() {
         {/* Header */}
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-4">
-            <Button variant="ghost" size="icon" onClick={() => navigate("/dashboard")}>
+            <Button variant="ghost" size="icon" onClick={() => navigate("/")}>
               <ArrowLeft className="h-5 w-5" />
             </Button>
             <div>
