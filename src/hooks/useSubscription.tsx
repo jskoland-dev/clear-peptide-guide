@@ -9,6 +9,8 @@ export function useSubscription() {
 
   useEffect(() => {
     if (user) {
+      // Ensure we don't render a free view before subscription status is known
+      setLoading(true);
       checkSubscription();
     } else {
       setIsPremium(false);
