@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { useNavigate } from "react-router-dom";
-import { Calculator, BookOpen, Beaker, Droplet, Target, GraduationCap, Check, X, LogIn, Bot, Sparkles, Camera } from "lucide-react";
+import { Calculator, BookOpen, Beaker, Droplet, Target, GraduationCap, Check, X, LogIn, Bot, Sparkles, Camera, Activity } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 
 const Index = () => {
@@ -114,6 +114,14 @@ const Index = () => {
                   </div>
                   <div className="flex items-start gap-3">
                     <Check className="h-5 w-5 text-primary mt-0.5 shrink-0" />
+                    <span className="font-medium">Multi-peptide stack calculator</span>
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <Check className="h-5 w-5 text-primary mt-0.5 shrink-0" />
+                    <span className="font-medium">Daily log tracker (mood, sleep, energy)</span>
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <Check className="h-5 w-5 text-primary mt-0.5 shrink-0" />
                     <span className="font-medium">Browse protocol library (view only)</span>
                   </div>
                   <div className="flex items-start gap-3">
@@ -125,10 +133,6 @@ const Index = () => {
                   </div>
                   <div className="pt-2 border-t">
                     <p className="text-sm text-muted-foreground italic">All premium features locked:</p>
-                  </div>
-                  <div className="flex items-start gap-3">
-                    <X className="h-5 w-5 text-muted-foreground mt-0.5 shrink-0" />
-                    <span className="text-muted-foreground">Multi-peptide stack calculator</span>
                   </div>
                   <div className="flex items-start gap-3">
                     <X className="h-5 w-5 text-muted-foreground mt-0.5 shrink-0" />
@@ -310,6 +314,17 @@ const Index = () => {
               <p className="text-muted-foreground leading-relaxed">
                 Calculate exact doses with confidence. Our smart calculator accounts for concentration, injection volume, and unit conversions automatically.
               </p>
+            </Card>
+
+            <Card className="p-8 card-hover border-primary/10 cursor-pointer" onClick={() => navigate('/daily-log')}>
+              <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-primary to-primary/50 flex items-center justify-center mb-6 shadow-lg">
+                <Activity className="w-7 h-7 text-white" />
+              </div>
+              <h3 className="text-xl font-bold mb-3">Daily Log Tracker</h3>
+              <p className="text-muted-foreground leading-relaxed">
+                Track your mood, sleep, energy, and side effects in under 30 seconds. Visualize patterns and correlate with your peptide usage.
+              </p>
+              <Badge className="mt-4">Free Tool</Badge>
             </Card>
           </div>
         </div>

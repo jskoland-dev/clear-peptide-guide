@@ -138,15 +138,13 @@ export default function Dashboard() {
             </p>
           </div>
           <div className="flex gap-2">
-            {isPremium && (
-              <Button variant="outline" onClick={() => navigate("/analytics")}>
-                <BarChart3 className="h-4 w-4 mr-2" />
-                Analytics
-              </Button>
-            )}
             <Button variant="outline" onClick={() => navigate("/ai-assistant")}>
               <Bot className="h-4 w-4 mr-2" />
               AI Assistant
+            </Button>
+            <Button variant="outline" onClick={() => navigate("/daily-log")}>
+              <Activity className="h-4 w-4 mr-2" />
+              Daily Log
             </Button>
             {isPremium && (
               <>
@@ -157,10 +155,6 @@ export default function Dashboard() {
                 <Button variant="outline" onClick={() => navigate("/analytics")}>
                   <BarChart3 className="h-4 w-4 mr-2" />
                   Analytics
-                </Button>
-                <Button variant="outline" onClick={() => navigate("/daily-log")}>
-                  <Activity className="h-4 w-4 mr-2" />
-                  Daily Log
                 </Button>
               </>
             )}

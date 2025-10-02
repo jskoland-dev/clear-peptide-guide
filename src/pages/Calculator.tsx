@@ -86,17 +86,9 @@ const Calculator = () => {
             <TabsTrigger 
               value="stack" 
               className="flex items-center gap-2"
-              disabled={!isPremium}
-              onClick={(e) => {
-                if (!isPremium) {
-                  e.preventDefault();
-                  setShowUpgradeDialog(true);
-                }
-              }}
             >
               <Layers className="w-4 h-4" />
               Stack Calculator
-              {!isPremium && <Lock className="w-3 h-3 ml-1" />}
             </TabsTrigger>
           </TabsList>
 
@@ -259,20 +251,7 @@ const Calculator = () => {
           </TabsContent>
 
           <TabsContent value="stack">
-            {isPremium ? (
-              <StackCalculator />
-            ) : (
-              <Card className="p-12 text-center">
-                <Lock className="w-12 h-12 mx-auto mb-4 text-muted-foreground" />
-                <h3 className="text-2xl font-bold mb-2">Premium Feature</h3>
-                <p className="text-muted-foreground mb-6">
-                  Upgrade to Premium to access the Multi-Peptide Stack Calculator
-                </p>
-                <Button variant="hero" onClick={() => setShowUpgradeDialog(true)}>
-                  Upgrade to Premium
-                </Button>
-              </Card>
-            )}
+            <StackCalculator />
           </TabsContent>
         </Tabs>
       </div>
