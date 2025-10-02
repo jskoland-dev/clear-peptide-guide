@@ -14,7 +14,134 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      injections: {
+        Row: {
+          created_at: string
+          dose_amount: number
+          dose_unit: string
+          id: string
+          injection_date: string
+          injection_site: string
+          notes: string | null
+          peptide_name: string
+          user_id: string
+          vial_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          dose_amount: number
+          dose_unit?: string
+          id?: string
+          injection_date: string
+          injection_site: string
+          notes?: string | null
+          peptide_name: string
+          user_id: string
+          vial_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          dose_amount?: number
+          dose_unit?: string
+          id?: string
+          injection_date?: string
+          injection_site?: string
+          notes?: string | null
+          peptide_name?: string
+          user_id?: string
+          vial_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "injections_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "injections_vial_id_fkey"
+            columns: ["vial_id"]
+            isOneToOne: false
+            referencedRelation: "vials"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      profiles: {
+        Row: {
+          created_at: string
+          email: string | null
+          full_name: string | null
+          id: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          email?: string | null
+          full_name?: string | null
+          id: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          email?: string | null
+          full_name?: string | null
+          id?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      vials: {
+        Row: {
+          bac_water_ml: number
+          created_at: string
+          expiration_date: string | null
+          id: string
+          notes: string | null
+          peptide_name: string
+          reconstitution_date: string
+          remaining_amount_mg: number
+          total_amount_mg: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          bac_water_ml: number
+          created_at?: string
+          expiration_date?: string | null
+          id?: string
+          notes?: string | null
+          peptide_name: string
+          reconstitution_date: string
+          remaining_amount_mg: number
+          total_amount_mg: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          bac_water_ml?: number
+          created_at?: string
+          expiration_date?: string | null
+          id?: string
+          notes?: string | null
+          peptide_name?: string
+          reconstitution_date?: string
+          remaining_amount_mg?: number
+          total_amount_mg?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "vials_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never

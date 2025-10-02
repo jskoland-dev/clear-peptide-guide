@@ -49,6 +49,13 @@ const Index = () => {
                 <GraduationCap className="w-5 h-5" />
                 Learn the Basics
               </Button>
+              <Button 
+                variant="outline" 
+                size="xl"
+                onClick={() => navigate('/auth')}
+              >
+                Track Your Doses
+              </Button>
             </div>
           </div>
         </div>

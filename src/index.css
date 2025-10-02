@@ -120,4 +120,22 @@ All colors MUST be HSL.
   .glass-card {
     @apply backdrop-blur-sm bg-white/80 border-white/20;
   }
+
+  .stat-card {
+    @apply transition-all duration-300 border border-border;
+  }
+
+  .stat-card:hover {
+    @apply -translate-y-0.5 shadow-lg;
+    box-shadow: 0 10px 25px -5px hsl(var(--primary) / 0.1);
+  }
+
+  .hover-lift {
+    @apply transition-all duration-300;
+  }
+
+  .hover-lift:hover {
+    @apply -translate-y-1;
+    box-shadow: 0 12px 30px -10px hsl(var(--primary) / 0.15);
+  }
 }
