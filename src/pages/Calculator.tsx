@@ -52,11 +52,11 @@ const Calculator = () => {
       <div className="container mx-auto max-w-5xl px-4 py-8">
         <Button
           variant="ghost"
-          onClick={() => navigate("/")}
+          onClick={() => navigate(-1)}
           className="mb-8"
         >
           <ArrowLeft className="w-4 h-4 mr-2" />
-          Back to Home
+          Back
         </Button>
 
         <div className="text-center mb-12">
