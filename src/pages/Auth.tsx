@@ -23,12 +23,46 @@ export default function Auth() {
   const { toast } = useToast();
 
   useEffect(() => {
-    // Check if we're in password reset mode
+    // Detect reset mode by query param
     if (searchParams.get("reset") === "true") {
       setIsResettingPassword(true);
       setIsLogin(false);
       setIsForgotPassword(false);
     }
+
+    // Attempt to exchange code/token for a session (handles email links across browsers)
+    const tryExchange = async () => {
+      try {
+        const href = window.location.href;
+        if (href.includes("code=") || href.includes("token_hash=") || href.includes("type=recovery")) {
+          const { data, error } = await supabase.auth.exchangeCodeForSession(href);
+          if (error) {
+            console.warn("exchangeCodeForSession error:", error.message);
+          } else {
+            // If this was a recovery link, show reset form
+            setIsResettingPassword(true);
+            setIsLogin(false);
+            setIsForgotPassword(false);
+            // Clean the URL to avoid re-exchanging on refresh
+            window.history.replaceState({}, document.title, window.location.pathname);
+          }
+        }
+      } catch (err) {
+        console.warn("exchange session failed", err);
+      }
+    };
+    tryExchange();
+
+    // Listen for PASSWORD_RECOVERY event as a fallback
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event) => {
+      if (event === "PASSWORD_RECOVERY") {
+        setIsResettingPassword(true);
+        setIsLogin(false);
+        setIsForgotPassword(false);
+      }
+    });
+
+    return () => subscription.unsubscribe();
   }, [searchParams]);
 
   const handleSubmit = async (e: React.FormEvent) => {
