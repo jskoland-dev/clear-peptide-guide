@@ -8,6 +8,7 @@ import Calculator from "./pages/Calculator";
 import Learn from "./pages/Learn";
 import Auth from "./pages/Auth";
 import Dashboard from "./pages/Dashboard";
+import Protocols from "./pages/Protocols";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -24,6 +25,7 @@ const App = () => (
           <Route path="/learn" element={<Learn />} />
           <Route path="/auth" element={<Auth />} />
           <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/protocols" element={<Protocols />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>

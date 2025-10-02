@@ -92,6 +92,135 @@ export type Database = {
         }
         Relationships: []
       }
+      protocol_reminders: {
+        Row: {
+          created_at: string
+          id: string
+          is_active: boolean
+          protocol_id: string
+          reminder_days: string[]
+          reminder_time: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          protocol_id: string
+          reminder_days: string[]
+          reminder_time: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          protocol_id?: string
+          reminder_days?: string[]
+          reminder_time?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "protocol_reminders_protocol_id_fkey"
+            columns: ["protocol_id"]
+            isOneToOne: false
+            referencedRelation: "protocols"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "protocol_reminders_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      protocols: {
+        Row: {
+          benefits: string[]
+          category: string
+          common_stacks: string[]
+          created_at: string
+          cycle_length: string
+          description: string
+          expected_results: string[]
+          frequency: string
+          id: string
+          peptide_name: string
+          recommended_dose: string
+          warnings: string[]
+        }
+        Insert: {
+          benefits: string[]
+          category: string
+          common_stacks: string[]
+          created_at?: string
+          cycle_length: string
+          description: string
+          expected_results: string[]
+          frequency: string
+          id?: string
+          peptide_name: string
+          recommended_dose: string
+          warnings: string[]
+        }
+        Update: {
+          benefits?: string[]
+          category?: string
+          common_stacks?: string[]
+          created_at?: string
+          cycle_length?: string
+          description?: string
+          expected_results?: string[]
+          frequency?: string
+          id?: string
+          peptide_name?: string
+          recommended_dose?: string
+          warnings?: string[]
+        }
+        Relationships: []
+      }
+      user_saved_protocols: {
+        Row: {
+          created_at: string
+          id: string
+          notes: string | null
+          protocol_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          notes?: string | null
+          protocol_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          notes?: string | null
+          protocol_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_saved_protocols_protocol_id_fkey"
+            columns: ["protocol_id"]
+            isOneToOne: false
+            referencedRelation: "protocols"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "user_saved_protocols_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       vials: {
         Row: {
           bac_water_ml: number

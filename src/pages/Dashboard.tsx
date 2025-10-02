@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LineChart, Line, PieChart, Pie, Cell } from "recharts";
-import { Activity, Syringe, FlaskConical, TrendingUp, LogOut, Plus } from "lucide-react";
+import { Activity, Syringe, FlaskConical, TrendingUp, LogOut, Plus, BookOpen } from "lucide-react";
 import { InjectionLog } from "@/components/dashboard/InjectionLog";
 import { VialTracker } from "@/components/dashboard/VialTracker";
 import { AddInjectionDialog } from "@/components/dashboard/AddInjectionDialog";
@@ -134,6 +134,10 @@ export default function Dashboard() {
             <p className="text-muted-foreground mt-2">Track your peptide journey with precision</p>
           </div>
           <div className="flex gap-2">
+            <Button variant="outline" onClick={() => navigate("/protocols")}>
+              <BookOpen className="h-4 w-4 mr-2" />
+              Protocols
+            </Button>
             <Button variant="outline" onClick={() => navigate("/")}>
               Home
             </Button>
