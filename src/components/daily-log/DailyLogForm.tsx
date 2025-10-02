@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Slider } from "@/components/ui/slider";
+// Slider removed to prevent runtime crash; using native range inputs
 import { Checkbox } from "@/components/ui/checkbox";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { useToast } from "@/hooks/use-toast";
@@ -185,12 +185,13 @@ export function DailyLogForm() {
                 <span className="font-semibold">{moodRating}/10</span>
               </div>
             </div>
-            <Slider
-              value={[moodRating]}
-              onValueChange={([value]) => setMoodRating(value)}
+            <input
+              type="range"
               min={1}
               max={10}
               step={1}
+              value={moodRating}
+              onChange={(e) => setMoodRating(Number(e.target.value))}
               className="w-full"
             />
           </div>
@@ -238,32 +239,35 @@ export function DailyLogForm() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div className="space-y-2">
               <Label>Sleep Quality: {sleepQuality}/10</Label>
-              <Slider
-                value={[sleepQuality]}
-                onValueChange={([value]) => setSleepQuality(value)}
+              <input
+                type="range"
                 min={1}
                 max={10}
                 step={1}
+                value={sleepQuality}
+                onChange={(e) => setSleepQuality(Number(e.target.value))}
               />
             </div>
             <div className="space-y-2">
               <Label>Energy Level: {energyLevel}/10</Label>
-              <Slider
-                value={[energyLevel]}
-                onValueChange={([value]) => setEnergyLevel(value)}
+              <input
+                type="range"
                 min={1}
                 max={10}
                 step={1}
+                value={energyLevel}
+                onChange={(e) => setEnergyLevel(Number(e.target.value))}
               />
             </div>
             <div className="space-y-2">
               <Label>Soreness: {sorenessLevel}/10</Label>
-              <Slider
-                value={[sorenessLevel]}
-                onValueChange={([value]) => setSorenessLevel(value)}
+              <input
+                type="range"
                 min={1}
                 max={10}
                 step={1}
+                value={sorenessLevel}
+                onChange={(e) => setSorenessLevel(Number(e.target.value))}
               />
             </div>
           </div>
