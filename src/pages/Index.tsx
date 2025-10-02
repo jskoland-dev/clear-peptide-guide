@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { useNavigate } from "react-router-dom";
-import { Calculator, BookOpen, Beaker, Droplet, Target, GraduationCap, Check, X, LogIn, Bot, Sparkles } from "lucide-react";
+import { Calculator, BookOpen, Beaker, Droplet, Target, GraduationCap, Check, X, LogIn, Bot, Sparkles, Camera } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 
 const Index = () => {
@@ -185,6 +185,27 @@ const Index = () => {
                         </div>
                         <p className="text-sm text-muted-foreground leading-relaxed">
                           Get personalized peptide protocol recommendations from our AI expert. Ask about dosing, stacking, timing, and safety - 100 messages per month included.
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Progress Photo Tracker Feature - Highlighted */}
+                  <div className="p-4 rounded-lg bg-gradient-to-br from-primary/10 to-primary/5 border border-primary/20">
+                    <div className="flex items-start gap-3 mb-2">
+                      <div className="shrink-0 p-1.5 rounded-lg bg-primary/20">
+                        <Camera className="h-4 w-4 text-primary" />
+                      </div>
+                      <div className="flex-1">
+                        <div className="flex items-center gap-2 mb-1">
+                          <span className="font-bold">Progress Photo Tracker</span>
+                          <Badge variant="secondary" className="text-xs">
+                            <Sparkles className="h-3 w-3 mr-1" />
+                            New
+                          </Badge>
+                        </div>
+                        <p className="text-sm text-muted-foreground leading-relaxed">
+                          Track your transformation with before/after photos, measurements, and side-by-side comparisons. Tag photos with peptides used and visualize your progress over time.
                         </p>
                       </div>
                     </div>

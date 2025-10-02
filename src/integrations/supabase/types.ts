@@ -92,6 +92,45 @@ export type Database = {
         }
         Relationships: []
       }
+      progress_photos: {
+        Row: {
+          created_at: string
+          date_taken: string
+          id: string
+          measurements: Json | null
+          notes: string | null
+          peptides_used: string[] | null
+          photo_url: string
+          updated_at: string
+          user_id: string
+          weight: number | null
+        }
+        Insert: {
+          created_at?: string
+          date_taken?: string
+          id?: string
+          measurements?: Json | null
+          notes?: string | null
+          peptides_used?: string[] | null
+          photo_url: string
+          updated_at?: string
+          user_id: string
+          weight?: number | null
+        }
+        Update: {
+          created_at?: string
+          date_taken?: string
+          id?: string
+          measurements?: Json | null
+          notes?: string | null
+          peptides_used?: string[] | null
+          photo_url?: string
+          updated_at?: string
+          user_id?: string
+          weight?: number | null
+        }
+        Relationships: []
+      }
       protocol_reminders: {
         Row: {
           created_at: string

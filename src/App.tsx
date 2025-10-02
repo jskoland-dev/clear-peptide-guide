@@ -12,6 +12,7 @@ import Dashboard from "./pages/Dashboard";
 import Protocols from "./pages/Protocols";
 import MyVials from "./pages/MyVials";
 import AIAssistant from "./pages/AIAssistant";
+import Progress from "./pages/Progress";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -32,6 +33,7 @@ const App = () => (
           <Route path="/protocols" element={<Protocols />} />
           <Route path="/vials" element={<MyVials />} />
           <Route path="/ai-assistant" element={<AIAssistant />} />
+          <Route path="/progress" element={<Progress />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
