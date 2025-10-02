@@ -257,6 +257,15 @@ export default function Auth() {
                 {isLogin ? "Need an account? Sign up" : "Already have an account? Sign in"}
               </button>
             )}
+            <div className="pt-2">
+              <button
+                type="button"
+                onClick={() => navigate("/")}
+                className="text-muted-foreground hover:text-primary hover:underline"
+              >
+                ← Back to Home
+              </button>
+            </div>
           </div>
         </CardContent>
       </Card>
