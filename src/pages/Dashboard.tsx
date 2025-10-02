@@ -124,152 +124,6 @@ export default function Dashboard() {
     );
   }
 
-  // Premium Gate - Show upgrade prompt if not premium
-  if (!isPremium) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-primary/5 via-background to-secondary/5">
-        <div className="container mx-auto p-6">
-          {/* Header */}
-          <div className="flex justify-between items-center mb-8">
-            <div>
-              <h1 className="text-4xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
-                Dose Tracker Dashboard
-              </h1>
-              <p className="text-muted-foreground mt-2">Upgrade to unlock tracking features</p>
-            </div>
-            <div className="flex gap-2">
-              <Button variant="outline" onClick={() => navigate("/")}>
-                Home
-              </Button>
-              <Button variant="outline" onClick={signOut}>
-                <LogOut className="h-4 w-4 mr-2" />
-                Sign Out
-              </Button>
-            </div>
-          </div>
-
-          {/* Upgrade Card */}
-          <Card className="max-w-4xl mx-auto border-2 border-primary/20 bg-gradient-to-br from-primary/5 via-background to-secondary/5">
-            <CardHeader className="text-center pb-4">
-              <div className="w-20 h-20 mx-auto mb-4 rounded-full bg-gradient-to-br from-primary to-secondary flex items-center justify-center">
-                <Lock className="w-10 h-10 text-white" />
-              </div>
-              <CardTitle className="text-3xl mb-2">Unlock Premium Tracking</CardTitle>
-              <CardDescription className="text-lg">
-                Get full access to dose tracking, vial management, and analytics
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-6">
-              {/* Preview Stats */}
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                <div className="relative">
-                  <Card className="p-4 bg-muted/50">
-                    <div className="absolute inset-0 backdrop-blur-sm bg-background/50 rounded-lg flex items-center justify-center">
-                      <Lock className="w-6 h-6 text-muted-foreground" />
-                    </div>
-                    <div className="text-sm font-medium text-muted-foreground">Total Injections</div>
-                    <div className="text-2xl font-bold mt-1">--</div>
-                  </Card>
-                </div>
-                <div className="relative">
-                  <Card className="p-4 bg-muted/50">
-                    <div className="absolute inset-0 backdrop-blur-sm bg-background/50 rounded-lg flex items-center justify-center">
-                      <Lock className="w-6 h-6 text-muted-foreground" />
-                    </div>
-                    <div className="text-sm font-medium text-muted-foreground">Average Dose</div>
-                    <div className="text-2xl font-bold mt-1">--</div>
-                  </Card>
-                </div>
-                <div className="relative">
-                  <Card className="p-4 bg-muted/50">
-                    <div className="absolute inset-0 backdrop-blur-sm bg-background/50 rounded-lg flex items-center justify-center">
-                      <Lock className="w-6 h-6 text-muted-foreground" />
-                    </div>
-                    <div className="text-sm font-medium text-muted-foreground">Active Vials</div>
-                    <div className="text-2xl font-bold mt-1">--</div>
-                  </Card>
-                </div>
-                <div className="relative">
-                  <Card className="p-4 bg-muted/50">
-                    <div className="absolute inset-0 backdrop-blur-sm bg-background/50 rounded-lg flex items-center justify-center">
-                      <Lock className="w-6 h-6 text-muted-foreground" />
-                    </div>
-                    <div className="text-sm font-medium text-muted-foreground">Low Vials</div>
-                    <div className="text-2xl font-bold mt-1">--</div>
-                  </Card>
-                </div>
-              </div>
-
-              {/* Features List */}
-              <div className="grid md:grid-cols-2 gap-4 py-6">
-                <div className="flex items-start gap-3">
-                  <Sparkles className="w-5 h-5 text-primary mt-1 shrink-0" />
-                  <div>
-                    <div className="font-semibold">Track Every Injection</div>
-                    <div className="text-sm text-muted-foreground">Log dose, site, date, and notes</div>
-                  </div>
-                </div>
-                <div className="flex items-start gap-3">
-                  <Sparkles className="w-5 h-5 text-primary mt-1 shrink-0" />
-                  <div>
-                    <div className="font-semibold">Manage Vial Inventory</div>
-                    <div className="text-sm text-muted-foreground">Track remaining amounts & expiration</div>
-                  </div>
-                </div>
-                <div className="flex items-start gap-3">
-                  <Sparkles className="w-5 h-5 text-primary mt-1 shrink-0" />
-                  <div>
-                    <div className="font-semibold">Visual Analytics</div>
-                    <div className="text-sm text-muted-foreground">Charts showing usage patterns</div>
-                  </div>
-                </div>
-                <div className="flex items-start gap-3">
-                  <Sparkles className="w-5 h-5 text-primary mt-1 shrink-0" />
-                  <div>
-                    <div className="font-semibold">Save Protocols</div>
-                    <div className="text-sm text-muted-foreground">Bookmark your favorite routines</div>
-                  </div>
-                </div>
-              </div>
-
-              {/* CTA */}
-              <div className="text-center space-y-4 pt-4">
-                <div className="text-2xl font-bold">$9<span className="text-lg text-muted-foreground font-normal">/month</span></div>
-                <Button size="lg" className="w-full md:w-auto px-8" onClick={() => navigate("/")}>
-                  <Sparkles className="w-4 h-4 mr-2" />
-                  Upgrade to Premium
-                </Button>
-                <p className="text-sm text-muted-foreground">
-                  Already premium? Refresh the page or sign out and back in.
-                </p>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Free Features Reminder */}
-          <div className="text-center mt-8 text-muted-foreground">
-            <p className="mb-2">You still have access to:</p>
-            <div className="flex flex-wrap justify-center gap-2">
-              <Button variant="outline" size="sm" onClick={() => navigate("/calculator")}>
-                Calculator
-              </Button>
-              <Button variant="outline" size="sm" onClick={() => navigate("/learn")}>
-                Learning Resources
-              </Button>
-              <Button variant="outline" size="sm" onClick={() => navigate("/protocols")}>
-                Browse Protocols
-              </Button>
-              <Button variant="outline" size="sm" onClick={() => navigate("/ai-assistant")}>
-                <Bot className="h-4 w-4 mr-2" />
-                Try AI Assistant (5 free messages)
-              </Button>
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
   return (
     <div className="min-h-screen bg-gradient-to-br from-primary/5 via-background to-secondary/5">
       <div className="container mx-auto p-6 space-y-6">
@@ -277,26 +131,29 @@ export default function Dashboard() {
         <div className="flex justify-between items-center">
           <div>
             <h1 className="text-4xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
-              Dose Tracker Dashboard
+              {isPremium ? "Dose Tracker Dashboard" : "Welcome to Your Dashboard"}
             </h1>
-            <p className="text-muted-foreground mt-2">Track your peptide journey with precision</p>
+            <p className="text-muted-foreground mt-2">
+              {isPremium ? "Track your peptide journey with precision" : "Explore free features and upgrade for full tracking"}
+            </p>
           </div>
           <div className="flex gap-2">
             <Button variant="outline" onClick={() => navigate("/ai-assistant")}>
               <Bot className="h-4 w-4 mr-2" />
               AI Assistant
             </Button>
-            <Button variant="outline" onClick={() => navigate("/progress")}>
-              <Camera className="h-4 w-4 mr-2" />
-              Progress
-            </Button>
-            <Button variant="outline" onClick={() => navigate("/vials")}>
-              <FlaskConical className="h-4 w-4 mr-2" />
-              My Vials
-            </Button>
+            {isPremium && (
+              <Button variant="outline" onClick={() => navigate("/progress")}>
+                <Camera className="h-4 w-4 mr-2" />
+                Progress
+              </Button>
+            )}
             <Button variant="outline" onClick={() => navigate("/protocols")}>
               <BookOpen className="h-4 w-4 mr-2" />
               Protocols
+            </Button>
+            <Button variant="outline" onClick={() => navigate("/calculator")}>
+              Calculator
             </Button>
             <Button variant="outline" onClick={() => navigate("/")}>
               Home
@@ -308,8 +165,32 @@ export default function Dashboard() {
           </div>
         </div>
 
+        {/* Upgrade Banner for Free Users */}
+        {!isPremium && (
+          <Card className="border-2 border-primary/20 bg-gradient-to-br from-primary/5 via-background to-secondary/5">
+            <CardContent className="p-6">
+              <div className="flex flex-col md:flex-row items-center justify-between gap-4">
+                <div className="flex items-center gap-4">
+                  <div className="w-12 h-12 rounded-full bg-gradient-to-br from-primary to-secondary flex items-center justify-center shrink-0">
+                    <Lock className="w-6 h-6 text-white" />
+                  </div>
+                  <div>
+                    <h3 className="font-bold text-lg">Unlock Full Tracking Features</h3>
+                    <p className="text-sm text-muted-foreground">Get dose tracking, vial management, progress photos, and unlimited AI messages</p>
+                  </div>
+                </div>
+                <Button size="lg" className="shrink-0">
+                  <Sparkles className="h-4 w-4 mr-2" />
+                  Upgrade to Premium - $9/mo
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
         {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        {isPremium ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           <Card className="stat-card">
             <CardHeader className="flex flex-row items-center justify-between pb-2">
               <CardTitle className="text-sm font-medium">Total Injections</CardTitle>
@@ -354,9 +235,78 @@ export default function Dashboard() {
             </CardContent>
           </Card>
         </div>
+        ) : (
+          /* Free User View - Locked Preview */
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div className="relative">
+              <Card className="stat-card opacity-50">
+                <div className="absolute inset-0 backdrop-blur-[2px] bg-background/30 rounded-lg flex items-center justify-center z-10">
+                  <Lock className="w-6 h-6 text-muted-foreground" />
+                </div>
+                <CardHeader className="flex flex-row items-center justify-between pb-2">
+                  <CardTitle className="text-sm font-medium">Total Injections</CardTitle>
+                  <Activity className="h-4 w-4 text-primary" />
+                </CardHeader>
+                <CardContent>
+                  <div className="text-3xl font-bold">--</div>
+                  <p className="text-xs text-muted-foreground mt-1">Premium feature</p>
+                </CardContent>
+              </Card>
+            </div>
 
-        {/* Charts */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div className="relative">
+              <Card className="stat-card opacity-50">
+                <div className="absolute inset-0 backdrop-blur-[2px] bg-background/30 rounded-lg flex items-center justify-center z-10">
+                  <Lock className="w-6 h-6 text-muted-foreground" />
+                </div>
+                <CardHeader className="flex flex-row items-center justify-between pb-2">
+                  <CardTitle className="text-sm font-medium">Average Dose</CardTitle>
+                  <Syringe className="h-4 w-4 text-secondary" />
+                </CardHeader>
+                <CardContent>
+                  <div className="text-3xl font-bold">--</div>
+                  <p className="text-xs text-muted-foreground mt-1">Premium feature</p>
+                </CardContent>
+              </Card>
+            </div>
+
+            <div className="relative">
+              <Card className="stat-card opacity-50">
+                <div className="absolute inset-0 backdrop-blur-[2px] bg-background/30 rounded-lg flex items-center justify-center z-10">
+                  <Lock className="w-6 h-6 text-muted-foreground" />
+                </div>
+                <CardHeader className="flex flex-row items-center justify-between pb-2">
+                  <CardTitle className="text-sm font-medium">Active Vials</CardTitle>
+                  <FlaskConical className="h-4 w-4 text-accent" />
+                </CardHeader>
+                <CardContent>
+                  <div className="text-3xl font-bold">--</div>
+                  <p className="text-xs text-muted-foreground mt-1">Premium feature</p>
+                </CardContent>
+              </Card>
+            </div>
+
+            <div className="relative">
+              <Card className="stat-card opacity-50">
+                <div className="absolute inset-0 backdrop-blur-[2px] bg-background/30 rounded-lg flex items-center justify-center z-10">
+                  <Lock className="w-6 h-6 text-muted-foreground" />
+                </div>
+                <CardHeader className="flex flex-row items-center justify-between pb-2">
+                  <CardTitle className="text-sm font-medium">Low Vials</CardTitle>
+                  <TrendingUp className="h-4 w-4 text-destructive" />
+                </CardHeader>
+                <CardContent>
+                  <div className="text-3xl font-bold">--</div>
+                  <p className="text-xs text-muted-foreground mt-1">Premium feature</p>
+                </CardContent>
+              </Card>
+            </div>
+          </div>
+        )}
+
+        {/* Charts - Premium Only */}
+        {isPremium && (
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <Card>
             <CardHeader>
               <CardTitle>Injection Frequency (Last 7 Days)</CardTitle>
@@ -403,9 +353,11 @@ export default function Dashboard() {
             </CardContent>
           </Card>
         </div>
+        )}
 
-        {/* Main Content Tabs */}
-        <Tabs defaultValue="injections" className="space-y-4">
+        {/* Main Content Tabs - Premium Only */}
+        {isPremium && (
+          <Tabs defaultValue="injections" className="space-y-4">
           <TabsList className="grid w-full max-w-md grid-cols-2">
             <TabsTrigger value="injections">Injection Log</TabsTrigger>
             <TabsTrigger value="vials">Vial Tracker</TabsTrigger>
@@ -427,6 +379,67 @@ export default function Dashboard() {
             <VialTracker vials={vials} onUpdate={fetchData} />
           </TabsContent>
         </Tabs>
+        )}
+
+        {/* Free User - Available Features */}
+        {!isPremium && (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <Card className="hover:shadow-lg transition-shadow cursor-pointer" onClick={() => navigate("/ai-assistant")}>
+              <CardHeader>
+                <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mb-3">
+                  <Bot className="h-6 w-6 text-primary" />
+                </div>
+                <CardTitle>AI Assistant</CardTitle>
+                <CardDescription>
+                  Get personalized peptide guidance
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <p className="text-sm text-muted-foreground mb-3">
+                  Ask questions about dosing, protocols, and safety
+                </p>
+                <div className="flex items-center gap-2 text-sm font-medium text-primary">
+                  <Sparkles className="h-4 w-4" />
+                  5 free messages/month
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card className="hover:shadow-lg transition-shadow cursor-pointer" onClick={() => navigate("/calculator")}>
+              <CardHeader>
+                <div className="w-12 h-12 rounded-full bg-secondary/10 flex items-center justify-center mb-3">
+                  <Activity className="h-6 w-6 text-secondary" />
+                </div>
+                <CardTitle>Dosage Calculator</CardTitle>
+                <CardDescription>
+                  Calculate precise peptide doses
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <p className="text-sm text-muted-foreground">
+                  Easy-to-use calculator for reconstitution and dosing
+                </p>
+              </CardContent>
+            </Card>
+
+            <Card className="hover:shadow-lg transition-shadow cursor-pointer" onClick={() => navigate("/protocols")}>
+              <CardHeader>
+                <div className="w-12 h-12 rounded-full bg-accent/10 flex items-center justify-center mb-3">
+                  <BookOpen className="h-6 w-6 text-accent" />
+                </div>
+                <CardTitle>Protocols Library</CardTitle>
+                <CardDescription>
+                  Browse peptide protocols
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <p className="text-sm text-muted-foreground">
+                  View detailed protocols for different goals
+                </p>
+              </CardContent>
+            </Card>
+          </div>
+        )}
       </div>
     </div>
   );
