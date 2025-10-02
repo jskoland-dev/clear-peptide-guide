@@ -25,44 +25,11 @@ export default function Auth() {
   useEffect(() => {
     // Detect reset mode by query param
     if (searchParams.get("reset") === "true") {
+      console.log("[Auth] Reset mode activated via query param");
       setIsResettingPassword(true);
       setIsLogin(false);
       setIsForgotPassword(false);
     }
-
-    // Attempt to exchange code/token for a session (handles email links across browsers)
-    const tryExchange = async () => {
-      try {
-        const href = window.location.href;
-        if (href.includes("code=") || href.includes("token_hash=") || href.includes("type=recovery")) {
-          const { data, error } = await supabase.auth.exchangeCodeForSession(href);
-          if (error) {
-            console.warn("exchangeCodeForSession error:", error.message);
-          } else {
-            // If this was a recovery link, show reset form
-            setIsResettingPassword(true);
-            setIsLogin(false);
-            setIsForgotPassword(false);
-            // Clean the URL to avoid re-exchanging on refresh
-            window.history.replaceState({}, document.title, window.location.pathname);
-          }
-        }
-      } catch (err) {
-        console.warn("exchange session failed", err);
-      }
-    };
-    tryExchange();
-
-    // Listen for PASSWORD_RECOVERY event as a fallback
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event) => {
-      if (event === "PASSWORD_RECOVERY") {
-        setIsResettingPassword(true);
-        setIsLogin(false);
-        setIsForgotPassword(false);
-      }
-    });
-
-    return () => subscription.unsubscribe();
   }, [searchParams]);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -71,6 +38,7 @@ export default function Auth() {
 
     try {
       if (isResettingPassword) {
+        console.log("[Auth] Attempting password update");
         if (newPassword !== confirmPassword) {
           toast({
             title: "Passwords don't match",
@@ -93,19 +61,22 @@ export default function Auth() {
           password: newPassword,
         });
         if (error) throw error;
+        console.log("[Auth] Password updated successfully");
         toast({ 
           title: "Password updated!", 
           description: "Your password has been successfully reset." 
         });
         navigate("/dashboard");
       } else if (isForgotPassword) {
+        console.log("[Auth] Sending password reset email to:", email);
         const { error } = await supabase.auth.resetPasswordForEmail(email, {
-          redirectTo: `${window.location.origin}/auth?reset=true`,
+          redirectTo: `${window.location.origin}/auth/callback`,
         });
         if (error) throw error;
+        console.log("[Auth] Reset email sent successfully");
         toast({ 
           title: "Check your email", 
-          description: "We've sent you a password reset link." 
+          description: "We've sent you a password reset link. Click the link to continue." 
         });
         setIsForgotPassword(false);
       } else if (isLogin) {

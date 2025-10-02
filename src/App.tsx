@@ -7,6 +7,7 @@ import Index from "./pages/Index";
 import Calculator from "./pages/Calculator";
 import Learn from "./pages/Learn";
 import Auth from "./pages/Auth";
+import AuthCallback from "./pages/AuthCallback";
 import Dashboard from "./pages/Dashboard";
 import Protocols from "./pages/Protocols";
 import MyVials from "./pages/MyVials";
@@ -25,6 +26,7 @@ const App = () => (
           <Route path="/calculator" element={<Calculator />} />
           <Route path="/learn" element={<Learn />} />
           <Route path="/auth" element={<Auth />} />
+          <Route path="/auth/callback" element={<AuthCallback />} />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/protocols" element={<Protocols />} />
           <Route path="/vials" element={<MyVials />} />
