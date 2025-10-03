@@ -16,11 +16,20 @@ const Calculator = () => {
   const navigate = useNavigate();
   const { isPremium } = useSubscription();
   const [showUpgradeDialog, setShowUpgradeDialog] = useState(false);
+  const [currentTab, setCurrentTab] = useState("single");
   const [peptideMg, setPeptideMg] = useState("");
   const [bacWater, setBacWater] = useState("");
   const [desiredDose, setDesiredDose] = useState("");
   const [doseUnit, setDoseUnit] = useState("mg");
   const [result, setResult] = useState<{ volume: number; concentration: number } | null>(null);
+
+  const handleTabChange = (value: string) => {
+    if (value === "stack" && !isPremium) {
+      setShowUpgradeDialog(true);
+      return;
+    }
+    setCurrentTab(value);
+  };
 
   const calculateDose = () => {
     const peptide = parseFloat(peptideMg);
@@ -77,7 +86,7 @@ const Calculator = () => {
           </p>
         </div>
 
-        <Tabs defaultValue="single" className="w-full">
+        <Tabs value={currentTab} onValueChange={handleTabChange} className="w-full">
           <TabsList className="grid w-full max-w-md mx-auto mb-8 grid-cols-2">
             <TabsTrigger value="single" className="flex items-center gap-2">
               <Beaker className="w-4 h-4" />
@@ -89,6 +98,7 @@ const Calculator = () => {
             >
               <Layers className="w-4 h-4" />
               Stack Calculator
+              {!isPremium && <Lock className="w-3 h-3 ml-1" />}
             </TabsTrigger>
           </TabsList>
 
