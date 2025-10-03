@@ -38,13 +38,13 @@ const Index = () => {
             </div>
             
             <h1 className="text-5xl md:text-7xl font-bold tracking-tight">
-              <span className="gradient-text">Calculate Peptide Doses</span>
+              <span className="gradient-text">Your Complete Peptide</span>
               <br />
-              <span className="text-foreground">With Confidence</span>
+              <span className="text-foreground">Management Platform</span>
             </h1>
             
             <p className="text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed">
-              The only peptide calculator designed for beginners. We explain everything step-by-step, from mg to mcg conversions, BAC water ratios, and proper dosing - so you never have to guess.
+              From precise dose calculations to AI-powered guidance, progress tracking, and community insights - everything you need to master your peptide journey in one intuitive platform.
             </p>
             
             <div className="flex flex-col sm:flex-row gap-4 justify-center items-center pt-4">
@@ -64,14 +64,6 @@ const Index = () => {
               >
                 <GraduationCap className="w-5 h-5" />
                 Learn the Basics
-              </Button>
-              <Button 
-                variant="outline" 
-                size="xl"
-                onClick={() => navigate('/protocols')}
-              >
-                <BookOpen className="w-5 h-5 mr-2" />
-                Browse Protocols
               </Button>
             </div>
           </div>
