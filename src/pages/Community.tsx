@@ -46,7 +46,7 @@ interface CommunityProtocol {
 }
 
 export default function Community() {
-  const { user } = useAuth();
+  const { user, loading: authLoading } = useAuth();
   const navigate = useNavigate();
   const [protocols, setProtocols] = useState<CommunityProtocol[]>([]);
   const [loading, setLoading] = useState(true);
@@ -55,9 +55,18 @@ export default function Community() {
   const [sortBy, setSortBy] = useState("trending");
   const [isSubmitDialogOpen, setIsSubmitDialogOpen] = useState(false);
 
+  // Redirect unauthenticated users to login (protocols now require auth)
   useEffect(() => {
-    fetchProtocols();
-  }, [selectedGoal, sortBy]);
+    if (!authLoading && !user) {
+      navigate("/auth");
+    }
+  }, [user, authLoading, navigate]);
+
+  useEffect(() => {
+    if (user) {
+      fetchProtocols();
+    }
+  }, [selectedGoal, sortBy, user]);
 
   const fetchProtocols = async () => {
     setLoading(true);
@@ -169,11 +178,11 @@ export default function Community() {
         </div>
 
         {/* Protocol Feed */}
-        {loading ? (
+        {authLoading || loading ? (
           <div className="text-center py-12 text-muted-foreground">Loading protocols...</div>
         ) : filteredProtocols.length === 0 ? (
           <div className="text-center py-12 text-muted-foreground">
-            No protocols found. {user ? "Be the first to share your experience!" : "Sign in to share your protocol."}
+            No protocols found. Be the first to share your experience!
           </div>
         ) : (
           <div className="space-y-4">
