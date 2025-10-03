@@ -3,7 +3,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Bookmark, BookmarkCheck, Clock, Calendar, Target, AlertTriangle, Package, Bell, Lock } from "lucide-react";
+import { Bookmark, BookmarkCheck, Clock, Calendar, Target, AlertTriangle, Package, Bell, Lock, ShoppingCart } from "lucide-react";
 import { SetReminderDialog } from "./SetReminderDialog";
 import { useSubscription } from "@/hooks/useSubscription";
 import { useNavigate } from "react-router-dom";
@@ -21,6 +21,7 @@ interface Protocol {
   warnings: string[];
   description: string;
   benefits: string[];
+  purchase_url?: string;
 }
 
 interface ProtocolCardProps {
@@ -294,6 +295,19 @@ export function ProtocolCard({ protocol, isSaved, onSaveToggle }: ProtocolCardPr
                 ))}
               </div>
             </div>
+
+            {protocol.purchase_url && isPremium && (
+              <div className="border-t pt-4">
+                <Button
+                  className="w-full"
+                  size="lg"
+                  onClick={() => window.open(protocol.purchase_url, '_blank')}
+                >
+                  <ShoppingCart className="h-4 w-4 mr-2" />
+                  Buy from Nexaph
+                </Button>
+              </div>
+            )}
 
             <p className="text-xs text-muted-foreground border-t pt-4">
               This information is for educational purposes only. Always consult with a qualified healthcare professional before starting any peptide protocol.

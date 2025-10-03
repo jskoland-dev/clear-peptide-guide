@@ -399,6 +399,7 @@ export type Database = {
           frequency: string
           id: string
           peptide_name: string
+          purchase_url: string | null
           recommended_dose: string
           warnings: string[]
         }
@@ -413,6 +414,7 @@ export type Database = {
           frequency: string
           id?: string
           peptide_name: string
+          purchase_url?: string | null
           recommended_dose: string
           warnings: string[]
         }
@@ -427,6 +429,7 @@ export type Database = {
           frequency?: string
           id?: string
           peptide_name?: string
+          purchase_url?: string | null
           recommended_dose?: string
           warnings?: string[]
         }
