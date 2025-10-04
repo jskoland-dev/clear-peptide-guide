@@ -304,7 +304,9 @@ export function ProtocolCard({ protocol, isSaved, onSaveToggle }: ProtocolCardPr
                   onClick={() => window.open(protocol.purchase_url, '_blank')}
                 >
                   <ShoppingCart className="h-4 w-4 mr-2" />
-                  Buy from Nexaph
+                  {protocol.purchase_url.includes('nexaph.com') ? 'Buy from Nexaph' : 
+                   protocol.purchase_url.includes('corepeptides.com') ? 'Buy from Core Peptides' : 
+                   'Purchase'}
                 </Button>
               </div>
             )}
