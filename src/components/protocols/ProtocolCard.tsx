@@ -296,7 +296,7 @@ export function ProtocolCard({ protocol, isSaved, onSaveToggle }: ProtocolCardPr
               </div>
             </div>
 
-            {protocol.purchase_url && (
+            {protocol.purchase_url && isPremium && (
               <div className="border-t pt-4">
                 <Button
                   className="w-full"
