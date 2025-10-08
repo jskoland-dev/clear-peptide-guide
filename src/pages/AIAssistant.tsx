@@ -6,6 +6,7 @@ import { Bot, Send, ArrowLeft, Loader2, AlertCircle } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
 import { useAIUsage } from "@/hooks/useAIUsage";
+import { useAuth } from "@/hooks/useAuth";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -17,7 +18,19 @@ type Message = {
 const AIAssistant = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { user, loading: authLoading } = useAuth();
   const { usage, loading: usageLoading, refetch: refetchUsage } = useAIUsage();
+
+  useEffect(() => {
+    if (!authLoading && !user) {
+      toast({
+        title: "Authentication Required",
+        description: "Please log in to use the AI Assistant.",
+        variant: "destructive",
+      });
+      navigate("/auth");
+    }
+  }, [user, authLoading, navigate, toast]);
   const [messages, setMessages] = useState<Message[]>([
     {
       role: "assistant",
@@ -58,6 +71,15 @@ const AIAssistant = () => {
       });
 
       if (!response.ok) {
+        if (response.status === 401) {
+          toast({
+            title: "Authentication Error",
+            description: "Please log out and log back in to continue.",
+            variant: "destructive",
+          });
+          setMessages(prev => prev.slice(0, -1));
+          return;
+        }
         if (response.status === 429) {
           toast({
             title: "Rate Limit Exceeded",
