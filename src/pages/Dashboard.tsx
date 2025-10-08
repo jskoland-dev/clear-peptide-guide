@@ -7,11 +7,19 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LineChart, Line, PieChart, Pie, Cell } from "recharts";
-import { Activity, Syringe, FlaskConical, TrendingUp, LogOut, Plus, BookOpen, Lock, Sparkles, Bot, Camera, BarChart3, Users } from "lucide-react";
+import { Activity, Syringe, FlaskConical, TrendingUp, LogOut, Plus, BookOpen, Lock, Sparkles, Bot, Camera, BarChart3, Users, Menu, Home, Calculator as CalcIcon } from "lucide-react";
 import { InjectionLog } from "@/components/dashboard/InjectionLog";
 import { VialTracker } from "@/components/dashboard/VialTracker";
 import { AddInjectionDialog } from "@/components/dashboard/AddInjectionDialog";
 import { AddVialDialog } from "@/components/dashboard/AddVialDialog";
+import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
 
 interface Injection {
   id: string;
@@ -125,19 +133,84 @@ export default function Dashboard() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-primary/5 via-background to-secondary/5">
+    <div className="min-h-screen bg-gradient-to-br from-primary/5 via-background to-secondary/5 pb-20 md:pb-6">
       <div className="container mx-auto p-6 space-y-6">
         {/* Header */}
-        <div className="flex justify-between items-center">
-          <div>
-            <h1 className="text-4xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
-              {isPremium ? "Dose Tracker Dashboard" : "Welcome to Your Dashboard"}
-            </h1>
-            <p className="text-muted-foreground mt-2">
-              {isPremium ? "Track your peptide journey with precision" : "Explore free features and upgrade for full tracking"}
-            </p>
+        <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-4">
+          <div className="flex items-center justify-between w-full md:w-auto">
+            <div>
+              <h1 className="text-2xl md:text-4xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
+                {isPremium ? "Dose Tracker Dashboard" : "Welcome to Your Dashboard"}
+              </h1>
+              <p className="text-muted-foreground mt-2 text-sm md:text-base">
+                {isPremium ? "Track your peptide journey with precision" : "Explore free features and upgrade for full tracking"}
+              </p>
+            </div>
+            
+            {/* Mobile Menu Button */}
+            <Sheet>
+              <SheetTrigger asChild>
+                <Button variant="outline" size="icon" className="md:hidden">
+                  <Menu className="h-5 w-5" />
+                </Button>
+              </SheetTrigger>
+              <SheetContent side="right">
+                <SheetHeader>
+                  <SheetTitle>Menu</SheetTitle>
+                  <SheetDescription>Navigate through the app</SheetDescription>
+                </SheetHeader>
+                <div className="flex flex-col gap-2 mt-6">
+                  <Button variant="outline" className="w-full justify-start" onClick={() => navigate("/dashboard")}>
+                    <Activity className="h-4 w-4 mr-2" />
+                    Dashboard
+                  </Button>
+                  <Button variant="outline" className="w-full justify-start" onClick={() => navigate("/protocols")}>
+                    <BookOpen className="h-4 w-4 mr-2" />
+                    Protocols
+                  </Button>
+                  <Button variant="outline" className="w-full justify-start" onClick={() => navigate("/community")}>
+                    <Users className="h-4 w-4 mr-2" />
+                    Community
+                  </Button>
+                  <Button variant="outline" className="w-full justify-start" onClick={() => navigate("/ai-assistant")}>
+                    <Bot className="h-4 w-4 mr-2" />
+                    AI Assistant
+                  </Button>
+                  <Button variant="outline" className="w-full justify-start" onClick={() => navigate("/daily-log")}>
+                    <Activity className="h-4 w-4 mr-2" />
+                    Daily Log
+                  </Button>
+                  {isPremium && (
+                    <>
+                      <Button variant="outline" className="w-full justify-start" onClick={() => navigate("/progress")}>
+                        <Camera className="h-4 w-4 mr-2" />
+                        Progress
+                      </Button>
+                      <Button variant="outline" className="w-full justify-start" onClick={() => navigate("/analytics")}>
+                        <BarChart3 className="h-4 w-4 mr-2" />
+                        Analytics
+                      </Button>
+                    </>
+                  )}
+                  <Button variant="outline" className="w-full justify-start" onClick={() => navigate("/calculator")}>
+                    <CalcIcon className="h-4 w-4 mr-2" />
+                    Calculator
+                  </Button>
+                  <Button variant="outline" className="w-full justify-start" onClick={() => navigate("/")}>
+                    <Home className="h-4 w-4 mr-2" />
+                    Home
+                  </Button>
+                  <Button variant="outline" className="w-full justify-start" onClick={signOut}>
+                    <LogOut className="h-4 w-4 mr-2" />
+                    Sign Out
+                  </Button>
+                </div>
+              </SheetContent>
+            </Sheet>
           </div>
-          <div className="flex gap-2">
+          
+          {/* Desktop Navigation - Hidden on mobile */}
+          <div className="hidden md:flex gap-2">
             <Button variant="outline" onClick={() => navigate("/ai-assistant")}>
               <Bot className="h-4 w-4 mr-2" />
               AI Assistant
@@ -175,6 +248,59 @@ export default function Dashboard() {
             <Button variant="outline" onClick={signOut}>
               <LogOut className="h-4 w-4 mr-2" />
               Sign Out
+            </Button>
+          </div>
+        </div>
+
+        {/* Mobile Bottom Navigation - Only visible on mobile */}
+        <div className="fixed bottom-0 left-0 right-0 bg-background border-t shadow-lg md:hidden z-50">
+          <div className="flex justify-around items-center px-2 py-3">
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              className="flex flex-col items-center gap-1 h-auto py-2 px-3"
+              onClick={() => navigate("/dashboard")}
+            >
+              <Activity className="h-5 w-5" />
+              <span className="text-xs">Dashboard</span>
+            </Button>
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              className="flex flex-col items-center gap-1 h-auto py-2 px-3"
+              onClick={() => navigate("/protocols")}
+            >
+              <BookOpen className="h-5 w-5" />
+              <span className="text-xs">Protocols</span>
+            </Button>
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              className="flex flex-col items-center gap-1 h-auto py-2 px-3"
+              onClick={() => navigate("/community")}
+            >
+              <Users className="h-5 w-5" />
+              <span className="text-xs">Community</span>
+            </Button>
+            {isPremium && (
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                className="flex flex-col items-center gap-1 h-auto py-2 px-3"
+                onClick={() => navigate("/progress")}
+              >
+                <Camera className="h-5 w-5" />
+                <span className="text-xs">Progress</span>
+              </Button>
+            )}
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              className="flex flex-col items-center gap-1 h-auto py-2 px-3"
+              onClick={() => navigate("/ai-assistant")}
+            >
+              <Bot className="h-5 w-5" />
+              <span className="text-xs">AI</span>
             </Button>
           </div>
         </div>
