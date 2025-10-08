@@ -254,54 +254,85 @@ export default function Dashboard() {
 
         {/* Mobile Bottom Navigation - Only visible on mobile */}
         <div className="fixed bottom-0 left-0 right-0 bg-background border-t shadow-lg md:hidden z-50">
-          <div className="flex justify-around items-center px-2 py-3">
-            <Button 
-              variant="ghost" 
-              size="sm" 
-              className="flex flex-col items-center gap-1 h-auto py-2 px-3"
-              onClick={() => navigate("/dashboard")}
-            >
-              <Activity className="h-5 w-5" />
-              <span className="text-xs">Dashboard</span>
-            </Button>
-            <Button 
-              variant="ghost" 
-              size="sm" 
-              className="flex flex-col items-center gap-1 h-auto py-2 px-3"
-              onClick={() => navigate("/protocols")}
-            >
-              <BookOpen className="h-5 w-5" />
-              <span className="text-xs">Protocols</span>
-            </Button>
-            <Button 
-              variant="ghost" 
-              size="sm" 
-              className="flex flex-col items-center gap-1 h-auto py-2 px-3"
-              onClick={() => navigate("/community")}
-            >
-              <Users className="h-5 w-5" />
-              <span className="text-xs">Community</span>
-            </Button>
-            {isPremium && (
+          <div className="overflow-x-auto scrollbar-hide">
+            <div className="flex items-center px-2 py-3 gap-1 min-w-max">
               <Button 
                 variant="ghost" 
                 size="sm" 
-                className="flex flex-col items-center gap-1 h-auto py-2 px-3"
-                onClick={() => navigate("/progress")}
+                className="flex flex-col items-center gap-1 h-auto py-2 px-3 shrink-0"
+                onClick={() => navigate("/dashboard")}
               >
-                <Camera className="h-5 w-5" />
-                <span className="text-xs">Progress</span>
+                <Activity className="h-5 w-5" />
+                <span className="text-xs whitespace-nowrap">Dashboard</span>
               </Button>
-            )}
-            <Button 
-              variant="ghost" 
-              size="sm" 
-              className="flex flex-col items-center gap-1 h-auto py-2 px-3"
-              onClick={() => navigate("/ai-assistant")}
-            >
-              <Bot className="h-5 w-5" />
-              <span className="text-xs">AI</span>
-            </Button>
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                className="flex flex-col items-center gap-1 h-auto py-2 px-3 shrink-0"
+                onClick={() => navigate("/protocols")}
+              >
+                <BookOpen className="h-5 w-5" />
+                <span className="text-xs whitespace-nowrap">Protocols</span>
+              </Button>
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                className="flex flex-col items-center gap-1 h-auto py-2 px-3 shrink-0"
+                onClick={() => navigate("/community")}
+              >
+                <Users className="h-5 w-5" />
+                <span className="text-xs whitespace-nowrap">Community</span>
+              </Button>
+              {isPremium && (
+                <Button 
+                  variant="ghost" 
+                  size="sm" 
+                  className="flex flex-col items-center gap-1 h-auto py-2 px-3 shrink-0"
+                  onClick={() => navigate("/progress")}
+                >
+                  <Camera className="h-5 w-5" />
+                  <span className="text-xs whitespace-nowrap">Progress</span>
+                </Button>
+              )}
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                className="flex flex-col items-center gap-1 h-auto py-2 px-3 shrink-0"
+                onClick={() => navigate("/ai-assistant")}
+              >
+                <Bot className="h-5 w-5" />
+                <span className="text-xs whitespace-nowrap">AI</span>
+              </Button>
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                className="flex flex-col items-center gap-1 h-auto py-2 px-3 shrink-0"
+                onClick={() => navigate("/daily-log")}
+              >
+                <Activity className="h-5 w-5" />
+                <span className="text-xs whitespace-nowrap">Daily Log</span>
+              </Button>
+              {isPremium && (
+                <Button 
+                  variant="ghost" 
+                  size="sm" 
+                  className="flex flex-col items-center gap-1 h-auto py-2 px-3 shrink-0"
+                  onClick={() => navigate("/analytics")}
+                >
+                  <BarChart3 className="h-5 w-5" />
+                  <span className="text-xs whitespace-nowrap">Analytics</span>
+                </Button>
+              )}
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                className="flex flex-col items-center gap-1 h-auto py-2 px-3 shrink-0"
+                onClick={() => navigate("/calculator")}
+              >
+                <CalcIcon className="h-5 w-5" />
+                <span className="text-xs whitespace-nowrap">Calculator</span>
+              </Button>
+            </div>
           </div>
         </div>
 
