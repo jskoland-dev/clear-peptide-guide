@@ -50,21 +50,20 @@ export default function Analytics() {
   useEffect(() => {
     if (!loading && !user) {
       navigate("/auth");
+      return;
     }
-  }, [user, loading, navigate]);
 
-  useEffect(() => {
-    // Only redirect if user exists, subscription is loaded, AND confirmed not premium
-    if (user && !subscriptionLoading && !loading && !isPremium) {
-      navigate("/dashboard");
+    // Wait until subscription is fully loaded before checking premium status
+    if (!subscriptionLoading && user) {
+      if (!isPremium) {
+        console.log("Not premium, redirecting to dashboard");
+        navigate("/dashboard");
+      } else {
+        console.log("Premium confirmed, fetching data");
+        fetchData();
+      }
     }
-  }, [user, isPremium, subscriptionLoading, loading, navigate]);
-
-  useEffect(() => {
-    if (user && isPremium) {
-      fetchData();
-    }
-  }, [user, isPremium]);
+  }, [user, loading, isPremium, subscriptionLoading, navigate]);
 
   const fetchData = async () => {
     const [injectionsRes, vialsRes] = await Promise.all([
