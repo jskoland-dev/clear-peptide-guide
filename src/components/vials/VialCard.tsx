@@ -20,10 +20,11 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { FlaskConical, MoreVertical, CheckCircle, XCircle, Clock, Trash2 } from "lucide-react";
+import { FlaskConical, MoreVertical, CheckCircle, XCircle, Clock, Trash2, Pencil } from "lucide-react";
 import { format, differenceInDays, differenceInHours, isPast } from "date-fns";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { EditVialDialog } from "@/components/dashboard/EditVialDialog";
 
 interface Vial {
   id: string;
@@ -151,31 +152,34 @@ export function VialCard({ vial, onStatusUpdate, onDelete }: VialCardProps) {
           <div className="flex items-center gap-2">
             {getStatusBadge()}
             {(vial.status === "active" || vial.status === "expired") && (
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" size="icon" className="h-8 w-8">
-                    <MoreVertical className="h-4 w-4" />
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end">
-                  <DropdownMenuItem onClick={() => onStatusUpdate(vial.id, "finished")}>
-                    <CheckCircle className="h-4 w-4 mr-2" />
-                    Mark as Finished
-                  </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => onStatusUpdate(vial.id, "disposed")}>
-                    <XCircle className="h-4 w-4 mr-2" />
-                    Mark as Disposed
-                  </DropdownMenuItem>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem 
-                    onClick={() => setShowDeleteDialog(true)}
-                    className="text-destructive focus:text-destructive"
-                  >
-                    <Trash2 className="h-4 w-4 mr-2" />
-                    Delete Vial
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
+              <>
+                <EditVialDialog vial={vial} onSuccess={onDelete || (() => {})} />
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="ghost" size="icon" className="h-8 w-8">
+                      <MoreVertical className="h-4 w-4" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end">
+                    <DropdownMenuItem onClick={() => onStatusUpdate(vial.id, "finished")}>
+                      <CheckCircle className="h-4 w-4 mr-2" />
+                      Mark as Finished
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => onStatusUpdate(vial.id, "disposed")}>
+                      <XCircle className="h-4 w-4 mr-2" />
+                      Mark as Disposed
+                    </DropdownMenuItem>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem 
+                      onClick={() => setShowDeleteDialog(true)}
+                      className="text-destructive focus:text-destructive"
+                    >
+                      <Trash2 className="h-4 w-4 mr-2" />
+                      Delete Vial
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </>
             )}
           </div>
         </div>

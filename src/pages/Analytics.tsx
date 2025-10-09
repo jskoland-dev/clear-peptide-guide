@@ -54,11 +54,11 @@ export default function Analytics() {
   }, [user, loading, navigate]);
 
   useEffect(() => {
-    // Only redirect after subscription is loaded AND confirmed not premium
-    if (!subscriptionLoading && !loading && !isPremium) {
+    // Only redirect if user exists, subscription is loaded, AND confirmed not premium
+    if (user && !subscriptionLoading && !loading && !isPremium) {
       navigate("/dashboard");
     }
-  }, [isPremium, subscriptionLoading, loading, navigate]);
+  }, [user, isPremium, subscriptionLoading, loading, navigate]);
 
   useEffect(() => {
     if (user && isPremium) {

@@ -12,11 +12,12 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { Calendar, MapPin, Pill, Trash2 } from "lucide-react";
+import { Calendar, MapPin, Pill, Trash2, Pencil } from "lucide-react";
 import { format } from "date-fns";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useState } from "react";
+import { EditInjectionDialog } from "./EditInjectionDialog";
 
 interface Injection {
   id: string;
@@ -86,6 +87,7 @@ export function InjectionLog({ injections, onUpdate }: InjectionLogProps) {
                 <Badge variant="secondary">
                   {injection.dose_amount} {injection.dose_unit}
                 </Badge>
+                <EditInjectionDialog injection={injection} onSuccess={onUpdate} />
                 <AlertDialog>
                   <AlertDialogTrigger asChild>
                     <Button
