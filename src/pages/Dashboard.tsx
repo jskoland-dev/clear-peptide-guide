@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LineChart, Line, PieChart, Pie, Cell } from "recharts";
-import { Activity, Syringe, FlaskConical, TrendingUp, LogOut, Plus, BookOpen, Lock, Sparkles, Bot, Camera, BarChart3, Users, Menu, Home, Calculator as CalcIcon } from "lucide-react";
+import { Activity, Syringe, FlaskConical, TrendingUp, LogOut, Plus, BookOpen, Lock, Sparkles, Bot, Camera, Users, Menu, Home, Calculator as CalcIcon } from "lucide-react";
 import { InjectionLog } from "@/components/dashboard/InjectionLog";
 import { VialTracker } from "@/components/dashboard/VialTracker";
 import { AddInjectionDialog } from "@/components/dashboard/AddInjectionDialog";
@@ -186,10 +186,6 @@ export default function Dashboard() {
                         <Camera className="h-4 w-4 mr-2" />
                         Progress
                       </Button>
-                      <Button variant="outline" className="w-full justify-start" onClick={() => navigate("/analytics")}>
-                        <BarChart3 className="h-4 w-4 mr-2" />
-                        Analytics
-                      </Button>
                     </>
                   )}
                   <Button variant="outline" className="w-full justify-start" onClick={() => navigate("/calculator")}>
@@ -228,10 +224,6 @@ export default function Dashboard() {
                 <Button variant="outline" onClick={() => navigate("/progress")}>
                   <Camera className="h-4 w-4 mr-2" />
                   Progress
-                </Button>
-                <Button variant="outline" onClick={() => navigate("/analytics")}>
-                  <BarChart3 className="h-4 w-4 mr-2" />
-                  Analytics
                 </Button>
               </>
             )}
@@ -312,17 +304,6 @@ export default function Dashboard() {
                 <Activity className="h-5 w-5" />
                 <span className="text-xs whitespace-nowrap">Daily Log</span>
               </Button>
-              {isPremium && (
-                <Button 
-                  variant="ghost" 
-                  size="sm" 
-                  className="flex flex-col items-center gap-1 h-auto py-2 px-3 shrink-0"
-                  onClick={() => navigate("/analytics")}
-                >
-                  <BarChart3 className="h-5 w-5" />
-                  <span className="text-xs whitespace-nowrap">Analytics</span>
-                </Button>
-              )}
               <Button 
                 variant="ghost" 
                 size="sm" 
