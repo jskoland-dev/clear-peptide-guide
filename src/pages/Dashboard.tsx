@@ -104,13 +104,19 @@ export default function Dashboard() {
     const last7Days = Array.from({ length: 7 }, (_, i) => {
       const date = new Date();
       date.setDate(date.getDate() - i);
-      return date.toISOString().split('T')[0];
+      date.setHours(0, 0, 0, 0);
+      return date;
     }).reverse();
 
-    return last7Days.map(date => ({
-      date: new Date(date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
-      count: injections.filter(inj => inj.injection_date.split('T')[0] === date).length,
-    }));
+    return last7Days.map(chartDate => {
+      const dateStr = chartDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+      const count = injections.filter(inj => {
+        const injDate = new Date(inj.injection_date);
+        injDate.setHours(0, 0, 0, 0);
+        return injDate.getTime() === chartDate.getTime();
+      }).length;
+      return { date: dateStr, count };
+    });
   };
 
   const getInjectionSiteData = () => {
