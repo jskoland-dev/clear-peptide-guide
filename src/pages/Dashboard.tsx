@@ -20,6 +20,13 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
 interface Injection {
   id: string;
@@ -54,6 +61,8 @@ export default function Dashboard() {
     activeVials: 0,
     lowVials: 0,
   });
+  const [timeRange, setTimeRange] = useState<'7d' | '30d' | '6m' | '1y' | 'all'>('7d');
+  const [selectedStatDetail, setSelectedStatDetail] = useState<string | null>(null);
 
   useEffect(() => {
     if (!loading && !user) {
@@ -101,20 +110,72 @@ export default function Dashboard() {
   };
 
   const getInjectionChartData = () => {
-    const last7Days = Array.from({ length: 7 }, (_, i) => {
+    let days: number;
+    let groupBy: 'day' | 'week' | 'month' = 'day';
+    
+    switch (timeRange) {
+      case '7d':
+        days = 7;
+        break;
+      case '30d':
+        days = 30;
+        break;
+      case '6m':
+        days = 180;
+        groupBy = 'week';
+        break;
+      case '1y':
+        days = 365;
+        groupBy = 'month';
+        break;
+      case 'all':
+        days = 3650; // 10 years
+        groupBy = 'month';
+        break;
+    }
+
+    const dateArray = Array.from({ length: groupBy === 'day' ? days : Math.ceil(days / (groupBy === 'week' ? 7 : 30)) }, (_, i) => {
       const date = new Date();
-      date.setDate(date.getDate() - i);
+      if (groupBy === 'day') {
+        date.setDate(date.getDate() - i);
+      } else if (groupBy === 'week') {
+        date.setDate(date.getDate() - (i * 7));
+      } else {
+        date.setMonth(date.getMonth() - i);
+      }
       date.setHours(0, 0, 0, 0);
       return date;
     }).reverse();
 
-    return last7Days.map(chartDate => {
-      const dateStr = chartDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-      const count = injections.filter(inj => {
-        const injDate = new Date(inj.injection_date);
-        injDate.setHours(0, 0, 0, 0);
-        return injDate.getTime() === chartDate.getTime();
-      }).length;
+    return dateArray.map(chartDate => {
+      let dateStr: string;
+      let count: number;
+
+      if (groupBy === 'day') {
+        dateStr = chartDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+        count = injections.filter(inj => {
+          const injDate = new Date(inj.injection_date);
+          injDate.setHours(0, 0, 0, 0);
+          return injDate.getTime() === chartDate.getTime();
+        }).length;
+      } else if (groupBy === 'week') {
+        const weekEnd = new Date(chartDate);
+        weekEnd.setDate(weekEnd.getDate() + 6);
+        dateStr = chartDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+        count = injections.filter(inj => {
+          const injDate = new Date(inj.injection_date);
+          injDate.setHours(0, 0, 0, 0);
+          return injDate >= chartDate && injDate <= weekEnd;
+        }).length;
+      } else {
+        dateStr = chartDate.toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
+        const monthEnd = new Date(chartDate.getFullYear(), chartDate.getMonth() + 1, 0);
+        count = injections.filter(inj => {
+          const injDate = new Date(inj.injection_date);
+          return injDate >= chartDate && injDate <= monthEnd;
+        }).length;
+      }
+
       return { date: dateStr, count };
     });
   };
@@ -126,6 +187,41 @@ export default function Dashboard() {
     }, {} as Record<string, number>);
 
     return Object.entries(sites).map(([name, value]) => ({ name, value }));
+  };
+
+  const getPeptideBreakdown = () => {
+    const peptides = injections.reduce((acc, inj) => {
+      acc[inj.peptide_name] = (acc[inj.peptide_name] || 0) + 1;
+      return acc;
+    }, {} as Record<string, number>);
+
+    return Object.entries(peptides)
+      .map(([name, count]) => ({ name, count }))
+      .sort((a, b) => b.count - a.count);
+  };
+
+  const getDoseStats = () => {
+    const doses = injections.map(inj => Number(inj.dose_amount));
+    if (doses.length === 0) return { min: 0, max: 0, median: 0 };
+    
+    const sorted = [...doses].sort((a, b) => a - b);
+    const median = sorted[Math.floor(sorted.length / 2)];
+    return {
+      min: Math.min(...doses),
+      max: Math.max(...doses),
+      median
+    };
+  };
+
+  const getLowVialsList = () => {
+    return vials.filter(v => {
+      const remaining = Number(v.remaining_amount_mg);
+      const total = Number(v.total_amount_mg);
+      return remaining > 0 && remaining < total * 0.2;
+    }).map(v => ({
+      ...v,
+      percentage: ((Number(v.remaining_amount_mg) / Number(v.total_amount_mg)) * 100).toFixed(1)
+    }));
   };
 
   const COLORS = ['hsl(var(--primary))', 'hsl(var(--secondary))', 'hsl(var(--accent))', 'hsl(var(--chart-1))', 'hsl(var(--chart-2))'];
@@ -349,47 +445,47 @@ export default function Dashboard() {
         {/* Stats Cards */}
         {isPremium ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-          <Card className="stat-card">
+          <Card className="stat-card cursor-pointer hover:shadow-lg transition-shadow" onClick={() => setSelectedStatDetail('injections')}>
             <CardHeader className="flex flex-row items-center justify-between pb-2">
               <CardTitle className="text-sm font-medium">Total Injections</CardTitle>
               <Activity className="h-4 w-4 text-primary" />
             </CardHeader>
             <CardContent>
               <div className="text-3xl font-bold">{stats.totalInjections}</div>
-              <p className="text-xs text-muted-foreground mt-1">All time</p>
+              <p className="text-xs text-muted-foreground mt-1">Tap for breakdown</p>
             </CardContent>
           </Card>
 
-          <Card className="stat-card">
+          <Card className="stat-card cursor-pointer hover:shadow-lg transition-shadow" onClick={() => setSelectedStatDetail('dose')}>
             <CardHeader className="flex flex-row items-center justify-between pb-2">
               <CardTitle className="text-sm font-medium">Average Dose</CardTitle>
               <Syringe className="h-4 w-4 text-secondary" />
             </CardHeader>
             <CardContent>
               <div className="text-3xl font-bold">{stats.averageDose.toFixed(2)}</div>
-              <p className="text-xs text-muted-foreground mt-1">mg per injection</p>
+              <p className="text-xs text-muted-foreground mt-1">Tap for details</p>
             </CardContent>
           </Card>
 
-          <Card className="stat-card">
+          <Card className="stat-card cursor-pointer hover:shadow-lg transition-shadow" onClick={() => navigate('/vials')}>
             <CardHeader className="flex flex-row items-center justify-between pb-2">
               <CardTitle className="text-sm font-medium">Active Vials</CardTitle>
               <FlaskConical className="h-4 w-4 text-accent" />
             </CardHeader>
             <CardContent>
               <div className="text-3xl font-bold">{stats.activeVials}</div>
-              <p className="text-xs text-muted-foreground mt-1">Currently in use</p>
+              <p className="text-xs text-muted-foreground mt-1">Tap to view all</p>
             </CardContent>
           </Card>
 
-          <Card className="stat-card">
+          <Card className="stat-card cursor-pointer hover:shadow-lg transition-shadow" onClick={() => setSelectedStatDetail('lowVials')}>
             <CardHeader className="flex flex-row items-center justify-between pb-2">
               <CardTitle className="text-sm font-medium">Low Vials</CardTitle>
               <TrendingUp className="h-4 w-4 text-destructive" />
             </CardHeader>
             <CardContent>
               <div className="text-3xl font-bold text-destructive">{stats.lowVials}</div>
-              <p className="text-xs text-muted-foreground mt-1">Need attention</p>
+              <p className="text-xs text-muted-foreground mt-1">Tap for list</p>
             </CardContent>
           </Card>
         </div>
@@ -467,8 +563,49 @@ export default function Dashboard() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <Card>
             <CardHeader>
-              <CardTitle>Injection Frequency (Last 7 Days)</CardTitle>
-              <CardDescription>Track your injection pattern</CardDescription>
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div>
+                  <CardTitle>Injection Frequency</CardTitle>
+                  <CardDescription>Track your injection pattern</CardDescription>
+                </div>
+                <div className="flex gap-2 flex-wrap">
+                  <Button 
+                    size="sm" 
+                    variant={timeRange === '7d' ? 'default' : 'outline'}
+                    onClick={() => setTimeRange('7d')}
+                  >
+                    7D
+                  </Button>
+                  <Button 
+                    size="sm" 
+                    variant={timeRange === '30d' ? 'default' : 'outline'}
+                    onClick={() => setTimeRange('30d')}
+                  >
+                    30D
+                  </Button>
+                  <Button 
+                    size="sm" 
+                    variant={timeRange === '6m' ? 'default' : 'outline'}
+                    onClick={() => setTimeRange('6m')}
+                  >
+                    6M
+                  </Button>
+                  <Button 
+                    size="sm" 
+                    variant={timeRange === '1y' ? 'default' : 'outline'}
+                    onClick={() => setTimeRange('1y')}
+                  >
+                    1Y
+                  </Button>
+                  <Button 
+                    size="sm" 
+                    variant={timeRange === 'all' ? 'default' : 'outline'}
+                    onClick={() => setTimeRange('all')}
+                  >
+                    All
+                  </Button>
+                </div>
+              </div>
             </CardHeader>
             <CardContent>
               <ResponsiveContainer width="100%" height={300}>
@@ -483,10 +620,10 @@ export default function Dashboard() {
             </CardContent>
           </Card>
 
-          <Card>
+          <Card className="cursor-pointer hover:shadow-lg transition-shadow" onClick={() => setSelectedStatDetail('sites')}>
             <CardHeader>
               <CardTitle>Injection Sites Distribution</CardTitle>
-              <CardDescription>Where you inject most often</CardDescription>
+              <CardDescription>Tap to see rotation recommendations</CardDescription>
             </CardHeader>
             <CardContent className="flex justify-center">
               <ResponsiveContainer width="100%" height={300}>
@@ -599,6 +736,136 @@ export default function Dashboard() {
           </div>
         )}
       </div>
+
+      {/* Detail Dialogs */}
+      <Dialog open={selectedStatDetail === 'injections'} onOpenChange={(open) => !open && setSelectedStatDetail(null)}>
+        <DialogContent className="max-w-md max-h-[80vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Injection Breakdown</DialogTitle>
+            <DialogDescription>Total injections by peptide type</DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4">
+            {getPeptideBreakdown().map((peptide) => (
+              <div key={peptide.name} className="flex justify-between items-center p-3 bg-muted/50 rounded-lg">
+                <span className="font-medium">{peptide.name}</span>
+                <span className="text-2xl font-bold text-primary">{peptide.count}</span>
+              </div>
+            ))}
+            {getPeptideBreakdown().length === 0 && (
+              <p className="text-sm text-muted-foreground text-center py-4">No injections recorded yet</p>
+            )}
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={selectedStatDetail === 'dose'} onOpenChange={(open) => !open && setSelectedStatDetail(null)}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle>Dose Statistics</DialogTitle>
+            <DialogDescription>Detailed breakdown of your dosing</DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div className="grid grid-cols-3 gap-4">
+              <div className="p-4 bg-muted/50 rounded-lg text-center">
+                <p className="text-xs text-muted-foreground mb-1">Minimum</p>
+                <p className="text-2xl font-bold">{getDoseStats().min}</p>
+                <p className="text-xs text-muted-foreground">mg</p>
+              </div>
+              <div className="p-4 bg-primary/10 rounded-lg text-center">
+                <p className="text-xs text-muted-foreground mb-1">Average</p>
+                <p className="text-2xl font-bold text-primary">{stats.averageDose.toFixed(2)}</p>
+                <p className="text-xs text-muted-foreground">mg</p>
+              </div>
+              <div className="p-4 bg-muted/50 rounded-lg text-center">
+                <p className="text-xs text-muted-foreground mb-1">Maximum</p>
+                <p className="text-2xl font-bold">{getDoseStats().max}</p>
+                <p className="text-xs text-muted-foreground">mg</p>
+              </div>
+            </div>
+            <div className="p-4 bg-secondary/10 rounded-lg">
+              <p className="text-sm text-muted-foreground mb-1">Median Dose</p>
+              <p className="text-3xl font-bold">{getDoseStats().median} <span className="text-base text-muted-foreground">mg</span></p>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={selectedStatDetail === 'lowVials'} onOpenChange={(open) => !open && setSelectedStatDetail(null)}>
+        <DialogContent className="max-w-md max-h-[80vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Low Vials Alert</DialogTitle>
+            <DialogDescription>Vials below 20% capacity</DialogDescription>
+          </DialogHeader>
+          <div className="space-y-3">
+            {getLowVialsList().map((vial) => (
+              <div key={vial.id} className="p-4 border border-destructive/20 bg-destructive/5 rounded-lg">
+                <div className="flex justify-between items-start mb-2">
+                  <div>
+                    <p className="font-semibold">{vial.peptide_name}</p>
+                    <p className="text-xs text-muted-foreground">
+                      {vial.remaining_amount_mg}mg / {vial.total_amount_mg}mg
+                    </p>
+                  </div>
+                  <span className="text-lg font-bold text-destructive">{vial.percentage}%</span>
+                </div>
+                <div className="w-full bg-muted rounded-full h-2">
+                  <div 
+                    className="bg-destructive h-2 rounded-full transition-all" 
+                    style={{ width: `${vial.percentage}%` }}
+                  />
+                </div>
+              </div>
+            ))}
+            {getLowVialsList().length === 0 && (
+              <p className="text-sm text-muted-foreground text-center py-4">All vials are well stocked!</p>
+            )}
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={selectedStatDetail === 'sites'} onOpenChange={(open) => !open && setSelectedStatDetail(null)}>
+        <DialogContent className="max-w-md max-h-[80vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Injection Site Analysis</DialogTitle>
+            <DialogDescription>Your injection site distribution and recommendations</DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div className="space-y-2">
+              {getInjectionSiteData().map((site) => {
+                const total = getInjectionSiteData().reduce((sum, s) => sum + s.value, 0);
+                const percentage = ((site.value / total) * 100).toFixed(1);
+                return (
+                  <div key={site.name} className="space-y-1">
+                    <div className="flex justify-between text-sm">
+                      <span className="font-medium">{site.name}</span>
+                      <span className="text-muted-foreground">{site.value} ({percentage}%)</span>
+                    </div>
+                    <div className="w-full bg-muted rounded-full h-2">
+                      <div 
+                        className="bg-primary h-2 rounded-full transition-all" 
+                        style={{ width: `${percentage}%` }}
+                      />
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+            
+            <div className="p-4 bg-primary/5 border border-primary/20 rounded-lg mt-6">
+              <h4 className="font-semibold mb-2 flex items-center gap-2">
+                <TrendingUp className="h-4 w-4 text-primary" />
+                Rotation Recommendations
+              </h4>
+              <ul className="space-y-2 text-sm text-muted-foreground">
+                <li>• Rotate injection sites to prevent tissue damage</li>
+                <li>• Allow 1-2 weeks between injections in the same spot</li>
+                <li>• Common sites: abdomen, thighs, upper arms, glutes</li>
+                <li>• Keep a balanced rotation across all sites</li>
+              </ul>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
