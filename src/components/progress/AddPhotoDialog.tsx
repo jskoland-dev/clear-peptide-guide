@@ -7,6 +7,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Camera, Upload, Loader2, X } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
+import { progressPhotoSchema } from "@/lib/validationSchemas";
 import { useToast } from "@/hooks/use-toast";
 import { Badge } from "@/components/ui/badge";
 
@@ -82,6 +83,34 @@ export function AddPhotoDialog({ open, onOpenChange, onPhotoAdded }: AddPhotoDia
 
   const handleSubmit = async () => {
     if (!selectedFile || !user) return;
+
+    // Validate inputs
+    try {
+      const validationResult = progressPhotoSchema.safeParse({
+        weight: formData.weight,
+        peptides: formData.peptides,
+        measurements: formData.measurements,
+        notes: formData.notes,
+        file: selectedFile,
+      });
+
+      if (!validationResult.success) {
+        const errors = validationResult.error.errors.map(e => e.message).join(", ");
+        toast({
+          title: "Validation Error",
+          description: errors,
+          variant: "destructive",
+        });
+        return;
+      }
+    } catch (error) {
+      toast({
+        title: "Validation Error",
+        description: "Please check your inputs and try again.",
+        variant: "destructive",
+      });
+      return;
+    }
 
     setLoading(true);
     try {

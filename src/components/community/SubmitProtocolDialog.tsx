@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
+import { communityProtocolSchema } from "@/lib/validationSchemas";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -59,21 +60,34 @@ export function SubmitProtocolDialog({ open, onOpenChange, onSuccess }: SubmitPr
     e.preventDefault();
     if (!user) return;
 
-    // Validation
-    if (!title || !goal || !schedule || !duration || !results) {
-      toast({
-        title: "Missing fields",
-        description: "Please fill in all required fields.",
-        variant: "destructive",
-      });
-      return;
-    }
-
     const validPeptides = peptides.filter((p) => p.name && p.dose);
-    if (validPeptides.length === 0) {
+
+    // Validate inputs
+    try {
+      const validationResult = communityProtocolSchema.safeParse({
+        title,
+        goal,
+        peptides: validPeptides,
+        schedule,
+        duration,
+        results,
+        sideEffects: sideEffects || undefined,
+        notes: notes || undefined,
+      });
+
+      if (!validationResult.success) {
+        const errors = validationResult.error.errors.map(e => e.message).join(", ");
+        toast({
+          title: "Validation Error",
+          description: errors,
+          variant: "destructive",
+        });
+        return;
+      }
+    } catch (error) {
       toast({
-        title: "No peptides",
-        description: "Please add at least one peptide with dosage.",
+        title: "Validation Error",
+        description: "Please check your inputs and try again.",
         variant: "destructive",
       });
       return;

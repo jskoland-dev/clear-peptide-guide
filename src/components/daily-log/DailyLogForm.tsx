@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { dailyLogSchema } from "@/lib/validationSchemas";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -96,6 +97,38 @@ export function DailyLogForm() {
       toast({
         title: "Sign in required",
         description: "Please sign in to save your daily logs.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // Validate inputs
+    try {
+      const validationResult = dailyLogSchema.safeParse({
+        moodRating,
+        sleepQuality,
+        energyLevel,
+        sorenessLevel,
+        sideEffectsNotes: sideEffectsNotes || undefined,
+        positiveEffects: positiveEffects || undefined,
+        bodyWeight: bodyWeight || undefined,
+        bodyFatPercentage: bodyFatPercentage || undefined,
+        notes: notes || undefined,
+      });
+
+      if (!validationResult.success) {
+        const errors = validationResult.error.errors.map(e => e.message).join(", ");
+        toast({
+          title: "Validation Error",
+          description: errors,
+          variant: "destructive",
+        });
+        return;
+      }
+    } catch (error) {
+      toast({
+        title: "Validation Error",
+        description: "Please check your inputs and try again.",
         variant: "destructive",
       });
       return;

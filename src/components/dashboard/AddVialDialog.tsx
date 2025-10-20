@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { supabase } from "@/integrations/supabase/client";
+import { vialSchema } from "@/lib/validationSchemas";
 import { useToast } from "@/hooks/use-toast";
 import { Plus } from "lucide-react";
 
@@ -28,6 +29,37 @@ export function AddVialDialog({ onSuccess }: AddVialDialogProps) {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    // Validate inputs
+    try {
+      const validationResult = vialSchema.safeParse({
+        peptideName: formData.peptideName,
+        totalAmount: formData.totalAmount,
+        bacWater: formData.bacWater,
+        reconstitutionDate: formData.reconstitutionDate,
+        expirationDate: formData.expirationDate || undefined,
+        cost: formData.cost || undefined,
+        notes: formData.notes || undefined,
+      });
+
+      if (!validationResult.success) {
+        const errors = validationResult.error.errors.map(e => e.message).join(", ");
+        toast({
+          title: "Validation Error",
+          description: errors,
+          variant: "destructive",
+        });
+        return;
+      }
+    } catch (error) {
+      toast({
+        title: "Validation Error",
+        description: "Please check your inputs and try again.",
+        variant: "destructive",
+      });
+      return;
+    }
+
     setLoading(true);
 
     try {

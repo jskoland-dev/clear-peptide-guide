@@ -6,6 +6,7 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { supabase } from "@/integrations/supabase/client";
+import { injectionSchema } from "@/lib/validationSchemas";
 import { useToast } from "@/hooks/use-toast";
 import { Plus } from "lucide-react";
 
@@ -45,6 +46,36 @@ export function AddInjectionDialog({ vials, onSuccess }: AddInjectionDialogProps
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    // Validate inputs
+    try {
+      const validationResult = injectionSchema.safeParse({
+        peptideName: formData.peptideName,
+        doseAmount: formData.doseAmount,
+        doseUnit: formData.doseUnit,
+        injectionSite: formData.injectionSite,
+        injectionDate: formData.injectionDate,
+        notes: formData.notes || undefined,
+      });
+
+      if (!validationResult.success) {
+        const errors = validationResult.error.errors.map(e => e.message).join(", ");
+        toast({
+          title: "Validation Error",
+          description: errors,
+          variant: "destructive",
+        });
+        return;
+      }
+    } catch (error) {
+      toast({
+        title: "Validation Error",
+        description: "Please check your inputs and try again.",
+        variant: "destructive",
+      });
+      return;
+    }
+
     setLoading(true);
 
     try {
