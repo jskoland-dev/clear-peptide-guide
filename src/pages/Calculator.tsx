@@ -41,17 +41,28 @@ const Calculator = () => {
       return;
     }
 
-    // Convert dose to mg if needed
+    const concentration = peptide / water; // mg per mL
+    
+    // Convert dose to mg if needed, or calculate from ml
     let doseInMg = dose;
+    let volumeNeeded = 0;
+    
     if (doseUnit === "mcg") {
       doseInMg = dose / 1000;
+      volumeNeeded = doseInMg / concentration;
     } else if (doseUnit === "units") {
       // Assuming 1 unit = 0.01mg for general peptides (can vary)
       doseInMg = dose * 0.01;
+      volumeNeeded = doseInMg / concentration;
+    } else if (doseUnit === "ml") {
+      // User specified volume directly in ml
+      volumeNeeded = dose;
+      doseInMg = volumeNeeded * concentration;
+    } else {
+      // mg
+      volumeNeeded = doseInMg / concentration;
     }
-
-    const concentration = peptide / water; // mg per mL
-    const volumeNeeded = doseInMg / concentration; // mL
+    
     const volumeInUnits = volumeNeeded * 100; // units (0.01mL = 1 unit on insulin syringe)
 
     setResult({
@@ -163,6 +174,7 @@ const Calculator = () => {
                   <SelectContent>
                     <SelectItem value="mg">mg</SelectItem>
                     <SelectItem value="mcg">mcg</SelectItem>
+                    <SelectItem value="ml">ml</SelectItem>
                     <SelectItem value="units">units</SelectItem>
                   </SelectContent>
                 </Select>
@@ -232,6 +244,10 @@ const Calculator = () => {
                 <div>
                   <p className="font-semibold text-foreground mb-1">mcg (micrograms)</p>
                   <p>Smaller unit. 1,000 mcg = 1 mg</p>
+                </div>
+                <div>
+                  <p className="font-semibold text-foreground mb-1">ml (milliliters)</p>
+                  <p>Volume measurement. 1 mL = 100 units on insulin syringe</p>
                 </div>
                 <div>
                   <p className="font-semibold text-foreground mb-1">units (syringe marks)</p>
