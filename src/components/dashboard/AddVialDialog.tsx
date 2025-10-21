@@ -67,22 +67,53 @@ export function AddVialDialog({ onSuccess }: AddVialDialogProps) {
       if (!user) throw new Error("Not authenticated");
 
       const totalAmount = parseFloat(formData.totalAmount);
+      const newCost = formData.cost ? parseFloat(formData.cost) : 0;
 
-      const { error } = await supabase.from("vials").insert({
-        user_id: user.id,
-        peptide_name: formData.peptideName,
-        total_amount_mg: totalAmount,
-        remaining_amount_mg: totalAmount,
-        bac_water_ml: parseFloat(formData.bacWater),
-        reconstitution_date: formData.reconstitutionDate,
-        expiration_date: formData.expirationDate || null,
-        cost: formData.cost ? parseFloat(formData.cost) : 0,
-        notes: formData.notes || null,
-      });
+      // Check if an active vial with the same peptide name already exists
+      const { data: existingVial } = await supabase
+        .from("vials")
+        .select("*")
+        .eq("user_id", user.id)
+        .eq("peptide_name", formData.peptideName)
+        .eq("status", "active")
+        .maybeSingle();
 
-      if (error) throw error;
+      if (existingVial) {
+        // Update existing vial by adding the new amounts
+        const { error } = await supabase
+          .from("vials")
+          .update({
+            total_amount_mg: existingVial.total_amount_mg + totalAmount,
+            remaining_amount_mg: existingVial.remaining_amount_mg + totalAmount,
+            bac_water_ml: parseFloat(formData.bacWater), // Use new value
+            reconstitution_date: formData.reconstitutionDate, // Use most recent
+            expiration_date: formData.expirationDate || existingVial.expiration_date,
+            cost: existingVial.cost + newCost, // Add to existing cost
+            notes: formData.notes || existingVial.notes, // Use new notes if provided
+          })
+          .eq("id", existingVial.id);
 
-      toast({ title: "Success!", description: "Vial added successfully." });
+        if (error) throw error;
+
+        toast({ title: "Success!", description: "Vial updated with new amount." });
+      } else {
+        // Create new vial if no active vial exists
+        const { error } = await supabase.from("vials").insert({
+          user_id: user.id,
+          peptide_name: formData.peptideName,
+          total_amount_mg: totalAmount,
+          remaining_amount_mg: totalAmount,
+          bac_water_ml: parseFloat(formData.bacWater),
+          reconstitution_date: formData.reconstitutionDate,
+          expiration_date: formData.expirationDate || null,
+          cost: newCost,
+          notes: formData.notes || null,
+        });
+
+        if (error) throw error;
+
+        toast({ title: "Success!", description: "Vial added successfully." });
+      }
       setOpen(false);
       setFormData({
         peptideName: "",
