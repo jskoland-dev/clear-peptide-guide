@@ -14,6 +14,42 @@ export type Database = {
   }
   public: {
     Tables: {
+      audit_logs: {
+        Row: {
+          action: string
+          created_at: string
+          id: string
+          ip_address: unknown | null
+          metadata: Json | null
+          record_id: string | null
+          table_name: string
+          user_agent: string | null
+          user_id: string | null
+        }
+        Insert: {
+          action: string
+          created_at?: string
+          id?: string
+          ip_address?: unknown | null
+          metadata?: Json | null
+          record_id?: string | null
+          table_name: string
+          user_agent?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          action?: string
+          created_at?: string
+          id?: string
+          ip_address?: unknown | null
+          metadata?: Json | null
+          record_id?: string | null
+          table_name?: string
+          user_agent?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       community_protocols: {
         Row: {
           created_at: string
@@ -614,6 +650,14 @@ export type Database = {
           remaining: number
         }[]
       }
+      detect_suspicious_activity: {
+        Args: { p_time_window?: unknown; p_user_id: string }
+        Returns: {
+          failed_attempts: number
+          last_attempt: string
+          user_id: string
+        }[]
+      }
       get_ai_usage: {
         Args: { p_user_id: string }
         Returns: {
@@ -625,6 +669,15 @@ export type Database = {
       }
       is_premium_user: {
         Args: { user_id: string }
+        Returns: boolean
+      }
+      log_storage_access: {
+        Args: {
+          p_action: string
+          p_bucket_id: string
+          p_object_path: string
+          p_user_id: string
+        }
         Returns: boolean
       }
     }

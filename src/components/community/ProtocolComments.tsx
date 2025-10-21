@@ -33,9 +33,10 @@ export function ProtocolComments({ protocolId }: ProtocolCommentsProps) {
   }, [protocolId]);
 
   const fetchComments = async () => {
+    // Exclude user_id from comments for privacy - keep comments anonymous
     const { data, error } = await supabase
       .from("protocol_comments")
-      .select("*")
+      .select("id, comment, created_at, is_flagged")
       .eq("protocol_id", protocolId)
       .eq("is_flagged", false)
       .order("created_at", { ascending: false });

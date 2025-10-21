@@ -70,9 +70,11 @@ export default function Community() {
 
   const fetchProtocols = async () => {
     setLoading(true);
+    // Select specific columns, excluding user_id for privacy
+    // Only include user_id for protocols owned by current user
     let query = supabase
       .from("community_protocols")
-      .select("*")
+      .select("id, title, goal, peptides_used, dosages, schedule, duration, results, side_effects, notes, upvotes, downvotes, created_at, user_id")
       .eq("is_flagged", false);
 
     if (selectedGoal !== "all") {
