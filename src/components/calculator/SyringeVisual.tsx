@@ -9,6 +9,10 @@ export const SyringeVisual = ({ units }: SyringeVisualProps) => {
   const clampedUnits = Math.max(0, Math.min(100, units));
   const position = clampedUnits;
 
+  // Generate all tick marks (every 2 units like real syringe)
+  const allTicks = Array.from({ length: 51 }, (_, i) => i * 2);
+  const majorTicks = [10, 20, 30, 40, 50, 60, 70, 80, 90, 100];
+
   return (
     <Card className="p-8 bg-gradient-to-br from-primary/5 to-secondary/5 border-primary/20">
       <h3 className="text-2xl font-bold mb-3 text-center">U-100 Insulin Syringe</h3>
@@ -16,72 +20,77 @@ export const SyringeVisual = ({ units }: SyringeVisualProps) => {
         Draw to the <span className="font-bold text-primary text-xl">{clampedUnits.toFixed(1)} unit</span> mark
       </p>
       
-      {/* Horizontal syringe ruler */}
-      <div className="relative w-full h-32 mb-6">
-        {/* Main ruler line */}
-        <div className="absolute bottom-12 left-0 right-0 h-2 bg-border rounded-full" />
-        
-        {/* Tick marks and labels */}
-        <div className="relative h-full">
-          {[0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100].map((mark) => {
-            const leftPosition = `${mark}%`;
-            return (
-              <div
-                key={mark}
-                className="absolute bottom-8"
-                style={{ left: leftPosition }}
-              >
-                {/* Major tick */}
-                <div className="relative">
-                  <div className="absolute -translate-x-1/2 w-0.5 h-8 bg-foreground" />
-                  <span className="absolute top-10 -translate-x-1/2 text-sm font-semibold text-foreground">
+      {/* Syringe barrel visualization */}
+      <div className="relative w-full mb-8">
+        {/* Syringe barrel background */}
+        <div className="relative bg-background border-2 border-foreground/20 rounded-lg overflow-hidden">
+          {/* Numbers above the barrel */}
+          <div className="relative h-10 px-4">
+            {majorTicks.map((mark) => {
+              const leftPosition = `${mark}%`;
+              return (
+                <div
+                  key={`label-${mark}`}
+                  className="absolute top-2"
+                  style={{ left: leftPosition }}
+                >
+                  <span className="absolute -translate-x-1/2 text-lg font-bold text-foreground">
                     {mark}
                   </span>
                 </div>
-              </div>
-            );
-          })}
+              );
+            })}
+          </div>
           
-          {/* Minor ticks (every 5 units) */}
-          {[5, 15, 25, 35, 45, 55, 65, 75, 85, 95].map((mark) => {
-            const leftPosition = `${mark}%`;
-            return (
+          {/* Barrel with tick marks */}
+          <div className="relative h-20 bg-card/50 border-t border-foreground/20">
+            <div className="absolute inset-0 px-4">
+              {/* All tick marks */}
+              {allTicks.map((mark) => {
+                const isMajor = majorTicks.includes(mark);
+                const leftPosition = `${mark}%`;
+                return (
+                  <div
+                    key={`tick-${mark}`}
+                    className="absolute top-0 bottom-0"
+                    style={{ left: leftPosition }}
+                  >
+                    <div 
+                      className={`absolute -translate-x-1/2 ${
+                        isMajor 
+                          ? 'w-0.5 h-full bg-foreground' 
+                          : 'w-px h-3/4 bg-foreground/40 top-[12.5%]'
+                      }`}
+                    />
+                  </div>
+                );
+              })}
+              
+              {/* Dose indicator line */}
               <div
-                key={mark}
-                className="absolute bottom-8"
-                style={{ left: leftPosition }}
+                className="absolute top-0 bottom-0 transition-all duration-500 z-10"
+                style={{ left: `${position}%` }}
               >
-                <div className="absolute -translate-x-1/2 w-0.5 h-4 bg-foreground/50" />
-              </div>
-            );
-          })}
-          
-          {/* Dose indicator */}
-          <div
-            className="absolute bottom-4 transition-all duration-500"
-            style={{ left: `${position}%` }}
-          >
-            <div className="relative -translate-x-1/2">
-              {/* Indicator line */}
-              <div className="w-1 h-16 bg-accent rounded-full shadow-lg" />
-              {/* Indicator label */}
-              <div className="absolute -top-8 left-1/2 -translate-x-1/2 bg-accent text-accent-foreground px-3 py-1.5 rounded-lg text-sm font-bold whitespace-nowrap shadow-lg">
-                Draw to here
+                <div className="relative h-full">
+                  <div className="absolute -translate-x-1/2 w-1 h-full bg-accent shadow-lg" />
+                </div>
               </div>
             </div>
           </div>
-        </div>
-      </div>
-
-      {/* Legend */}
-      <div className="flex items-center justify-center gap-6 mb-6 text-sm">
-        <div className="flex items-center gap-2">
-          <div className="w-4 h-4 bg-foreground rounded" />
-          <span className="text-muted-foreground">Syringe marks</span>
-        </div>
-        <div className="flex items-center gap-2">
-          <div className="w-4 h-4 bg-accent rounded" />
-          <span className="font-bold">Your dose</span>
+          
+          {/* Dose indicator label below */}
+          <div className="relative h-12">
+            <div
+              className="absolute top-3 transition-all duration-500"
+              style={{ left: `${position}%` }}
+            >
+              <div className="relative -translate-x-1/2">
+                <div className="bg-accent text-accent-foreground px-3 py-1.5 rounded-lg text-sm font-bold whitespace-nowrap shadow-lg">
+                  Draw to {clampedUnits.toFixed(1)}
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
       
