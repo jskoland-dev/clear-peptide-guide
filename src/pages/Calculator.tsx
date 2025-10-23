@@ -11,6 +11,7 @@ import { toast } from "sonner";
 import { StackCalculator } from "@/components/calculator/StackCalculator";
 import { useSubscription } from "@/hooks/useSubscription";
 import { UpgradeDialog } from "@/components/progress/UpgradeDialog";
+import { SyringeVisual } from "@/components/calculator/SyringeVisual";
 
 const Calculator = () => {
   const navigate = useNavigate();
@@ -199,36 +200,40 @@ const Calculator = () => {
           {/* Results & Info */}
           <div className="space-y-6">
             {result && (
-              <Card className="p-8 bg-gradient-to-br from-primary/5 to-secondary/5 border-primary/20">
-                <h3 className="text-2xl font-bold mb-6 flex items-center gap-2">
-                  <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center">
-                    <CalcIcon className="w-4 h-4 text-white" />
-                  </div>
-                  Your Results
-                </h3>
-                
-                <div className="space-y-4">
-                  <div className="bg-card p-4 rounded-lg border border-primary/10">
-                    <p className="text-sm text-muted-foreground mb-1">Inject Volume</p>
-                    <p className="text-3xl font-bold text-primary">
-                      {result.volume.toFixed(1)} units
-                    </p>
-                    <p className="text-sm text-muted-foreground mt-1">
-                      on an insulin syringe (100 unit = 1mL)
-                    </p>
-                  </div>
+              <>
+                <Card className="p-8 bg-gradient-to-br from-primary/5 to-secondary/5 border-primary/20">
+                  <h3 className="text-2xl font-bold mb-6 flex items-center gap-2">
+                    <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center">
+                      <CalcIcon className="w-4 h-4 text-white" />
+                    </div>
+                    Your Results
+                  </h3>
+                  
+                  <div className="space-y-4">
+                    <div className="bg-card p-4 rounded-lg border border-primary/10">
+                      <p className="text-sm text-muted-foreground mb-1">Inject Volume</p>
+                      <p className="text-3xl font-bold text-primary">
+                        {result.volume.toFixed(1)} units
+                      </p>
+                      <p className="text-sm text-muted-foreground mt-1">
+                        on an insulin syringe (100 unit = 1mL)
+                      </p>
+                    </div>
 
-                  <div className="bg-card p-4 rounded-lg border border-secondary/10">
-                    <p className="text-sm text-muted-foreground mb-1">Concentration</p>
-                    <p className="text-2xl font-bold text-secondary">
-                      {result.concentration.toFixed(2)} mg/mL
-                    </p>
-                    <p className="text-sm text-muted-foreground mt-1">
-                      or {(result.concentration * 1000).toFixed(0)} mcg/mL
-                    </p>
+                    <div className="bg-card p-4 rounded-lg border border-secondary/10">
+                      <p className="text-sm text-muted-foreground mb-1">Concentration</p>
+                      <p className="text-2xl font-bold text-secondary">
+                        {result.concentration.toFixed(2)} mg/mL
+                      </p>
+                      <p className="text-sm text-muted-foreground mt-1">
+                        or {(result.concentration * 1000).toFixed(0)} mcg/mL
+                      </p>
+                    </div>
                   </div>
-                </div>
-              </Card>
+                </Card>
+
+                <SyringeVisual units={result.volume} />
+              </>
             )}
 
             <Card className="p-6 bg-accent/5 border-accent/20">
