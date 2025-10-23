@@ -21,20 +21,20 @@ export const SyringeVisual = ({ units }: SyringeVisualProps) => {
       </p>
       
       {/* Syringe barrel visualization */}
-      <div className="relative w-full mb-8 overflow-x-auto">
+      <div className="relative w-full mb-8 px-8">
         {/* Syringe barrel background */}
-        <div className="relative bg-background border-2 border-foreground/20 rounded-lg overflow-visible min-w-full">
+        <div className="relative bg-background border-2 border-foreground/20 rounded-lg overflow-visible">
           {/* Numbers above the barrel */}
-          <div className="relative h-10">
+          <div className="relative h-12 pt-2">
             {majorTicks.map((mark) => {
-              const leftPosition = `calc(${mark}%)`;
+              const leftPosition = `${mark}%`;
               return (
                 <div
                   key={`label-${mark}`}
-                  className="absolute top-2"
+                  className="absolute"
                   style={{ left: leftPosition }}
                 >
-                  <span className="absolute -translate-x-1/2 text-base font-bold text-foreground">
+                  <span className="absolute -translate-x-1/2 text-base font-bold text-foreground whitespace-nowrap">
                     {mark}
                   </span>
                 </div>
@@ -47,7 +47,7 @@ export const SyringeVisual = ({ units }: SyringeVisualProps) => {
             {/* All tick marks */}
             {allTicks.map((mark) => {
               const isMajor = majorTicks.includes(mark);
-              const leftPosition = `calc(${mark}%)`;
+              const leftPosition = `${mark}%`;
               return (
                 <div
                   key={`tick-${mark}`}
@@ -68,7 +68,7 @@ export const SyringeVisual = ({ units }: SyringeVisualProps) => {
             {/* Dose indicator line */}
             <div
               className="absolute top-0 bottom-0 transition-all duration-500 z-10"
-              style={{ left: `calc(${position}%)` }}
+              style={{ left: `${position}%` }}
             >
               <div className="relative h-full">
                 <div className="absolute -translate-x-1/2 w-1 h-full bg-accent shadow-lg" />
@@ -77,10 +77,10 @@ export const SyringeVisual = ({ units }: SyringeVisualProps) => {
           </div>
           
           {/* Dose indicator label below */}
-          <div className="relative h-14">
+          <div className="relative h-16 pb-2">
             <div
               className="absolute top-4 transition-all duration-500"
-              style={{ left: `calc(${position}%)` }}
+              style={{ left: `${position}%` }}
             >
               <div className="relative -translate-x-1/2">
                 <div className="bg-accent text-accent-foreground px-3 py-1.5 rounded-lg text-sm font-bold whitespace-nowrap shadow-lg">
